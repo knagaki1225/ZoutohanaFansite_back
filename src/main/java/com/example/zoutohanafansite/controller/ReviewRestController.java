@@ -25,9 +25,13 @@ public class ReviewRestController {
 
     @PostMapping("/vote/{id}")
     public ResponseEntity<Void> voteReview(@PathVariable long id){
-        // ----------------------
-        // ここから
-        // 投票加算処理
+        reviewService.incrementVoteCount(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/vote/dec/{id}")
+    public ResponseEntity<Void> voteReviewDec(@PathVariable long id){
+        reviewService.incrementVoteCount(id);
         return ResponseEntity.ok().build();
     }
 }

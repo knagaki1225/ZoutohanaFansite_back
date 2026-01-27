@@ -110,4 +110,19 @@ public interface ReviewMapper {
         AND r.first_stage_passed = true
     """)
     List<Review> selectReviewsByUrlKey(String urlKey);
+
+    @Update("""
+        UPDATE reviews
+        SET vote_count = vote_count + 1
+        WHERE id = #{id}
+    """)
+    void incrementVoteCount(long id);
+
+    @Update("""
+        UPDATE reviews
+        SET vote_count = vote_count - 1
+        WHERE id = #{id}
+          AND vote_count > 0
+    """)
+    void decrementVoteCount(long id);
 }
