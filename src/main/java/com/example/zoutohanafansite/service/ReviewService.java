@@ -80,4 +80,12 @@ public class ReviewService {
         Collections.shuffle(reviewApiDataList);
         return reviewApiDataList;
     }
+
+    public void incrementVoteCount(long id){
+        reviewRepository.incrementVoteCount(id);
+    }
+
+    public void decrementVoteCount(long id){
+        reviewRepository.decrementVoteCount(id);
+    }
 }

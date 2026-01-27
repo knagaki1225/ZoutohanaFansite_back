@@ -50,4 +50,12 @@ public class ReviewRepository {
     public List<Review> selectReviewsByUrlKey(String urlKey){
         return reviewMapper.selectReviewsByUrlKey(urlKey);
     }
+
+    public void incrementVoteCount(long id){
+        reviewMapper.incrementVoteCount(id);
+    }
+
+    public void decrementVoteCount(long id){
+        reviewMapper.decrementVoteCount(id);
+    }
 }
