@@ -1,8 +1,11 @@
 package com.example.zoutohanafansite.service;
 
 import com.example.zoutohanafansite.entity.form.ReviewForm;
+import com.example.zoutohanafansite.entity.pagination.PaginationView;
+import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.entity.review.Review;
 import com.example.zoutohanafansite.entity.review.ReviewApiData;
+import com.example.zoutohanafansite.entity.review.ReviewPagination;
 import com.example.zoutohanafansite.repository.ReviewRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +16,13 @@ import java.util.List;
 @Service
 public class ReviewService {
     private final ReviewRepository reviewRepository;
+    private final PaginationService paginationService;
+    private final ProjectService projectService;
 
-    public ReviewService(ReviewRepository reviewRepository) {
+    public ReviewService(ReviewRepository reviewRepository, PaginationService paginationService, ProjectService projectService) {
         this.reviewRepository = reviewRepository;
+        this.paginationService = paginationService;
+        this.projectService = projectService;
     }
 
     public void setReview(Review review) {
@@ -81,11 +88,32 @@ public class ReviewService {
         return reviewApiDataList;
     }
 
+    public ReviewPagination getReviewApiData(String urlKey, int page){
+        List<Review> reviews = selectReviewsByUrlKey(urlKey);
+        List<ReviewApiData> reviewApiDataList = new ArrayList<>();
+
+        PaginationView paginationView = paginationService.getPaginationView(page, reviews.size(), 10);
+        for(int i = paginationView.getStartNum(); i < paginationView.getEndNum(); i++){
+            ReviewApiData reviewApiData = new ReviewApiData(reviews.get(i), "/api/image/book" + (i % 4 + 1) + ".png");
+            reviewApiDataList.add(reviewApiData);
+        }
+
+        return new ReviewPagination(paginationView.getPaginationInfo(), reviewApiDataList);
+    }
+
     public void incrementVoteCount(long id){
         reviewRepository.incrementVoteCount(id);
     }
 
     public void decrementVoteCount(long id){
         reviewRepository.decrementVoteCount(id);
+    }
+
+    public Review selectReviewByUrlKeyAndIdList(String urlKey, List<String> idList){
+        List<Long> ids = new ArrayList<>();
+        for(String id : idList){
+            ids.add(Long.parseLong(id));
+        }
+        return reviewRepository.selectReviewByUrlKeyAndIdList(urlKey, ids);
     }
 }

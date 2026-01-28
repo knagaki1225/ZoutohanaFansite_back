@@ -20,23 +20,53 @@ public class UserService {
         this.generateSecurityKeyService = generateSecurityKeyService;
     }
 
+    /**
+     * ユーザー新規登録
+     *
+     * @param user 新規登録ユーザー
+     */
     public void insertUser(User user){
         userRepository.insertUser(user);
     }
 
+    /**
+     * ログインID指定でのユーザー取得
+     *
+     * @param loginId ログインID
+     * @return User
+     */
     public User getUserById(String loginId){
         return userRepository.getUserByLoginId(loginId);
     }
 
+    /**
+     * セキュリティーキーのチェック
+     *
+     * @param passwordResetForm PasswordResetForm(loginId, securityKey)
+     * @return boolean
+     */
     public boolean checkSecurityKey(PasswordResetForm passwordResetForm){
         User user = getUserById(passwordResetForm.getLoginId());
         return passwordEncoder.matches(passwordResetForm.getSecurityKey(), user.getSecurityKey());
     }
 
+    /**
+     * パスワードリセット(DB Update)
+     *
+     * @param password 新規パスワード(ハッシュ済み)
+     * @param securityKey 新規セキュリティーキー(ハッシュ済み)
+     * @param loginId ログインID
+     */
     public void updatePassword(String password, String securityKey, String loginId){
         userRepository.updatePassword(password,securityKey,loginId);
     }
 
+    /**
+     * パスワードリセット
+     *
+     * @param newPasswordForm NewPasswordForm(loginId, password, confirmPassword)
+     * @return String 新規セキュリティーキー(未ハッシュ化)
+     */
     public String passwordReset(NewPasswordForm  newPasswordForm){
         if(newPasswordForm.getPassword().equals(newPasswordForm.getConfirmPassword())){
             String hashedPassword = passwordEncoder.encode(newPasswordForm.getPassword());
@@ -48,6 +78,11 @@ public class UserService {
         return null;
     }
 
+    /**
+     * アカウント削除
+     *
+     * @param id userId
+     */
     public void deleteUser(long id){
         userRepository.deleteUser(id);
     }

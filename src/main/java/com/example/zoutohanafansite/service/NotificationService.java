@@ -11,7 +11,13 @@ public class NotificationService {
         this.notificationRepository = notificationRepository;
     }
 
-    public int getSeenNum(long userId){
-        return notificationRepository.selectSeenNum(userId);
+    /**
+     * 未読のメール件数取得
+     *
+     * @param id userId
+     * @return int
+     */
+    public int getSeenNum(long id){
+        return notificationRepository.selectSeenNum(id);
     }
 }
