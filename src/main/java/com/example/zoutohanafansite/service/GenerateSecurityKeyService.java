@@ -10,6 +10,11 @@ public class GenerateSecurityKeyService {
     private static final SecureRandom random = new SecureRandom();
     private static final int length = 4;
 
+    /**
+     * パスワードリセット用セキュリティーキー生成
+     *
+     * @return String セキュリティーキー(未ハッシュ化)
+     */
     public static String generateSecurityKey() {
         StringBuilder sb1 = new StringBuilder(length);
         for (int i = 0; i < length; i++) {

@@ -26,6 +26,13 @@ public class ImageService {
     @Value("${image.webp.quality:0.85f}")
     private float webpQuality;
 
+    /**
+     * 画像保存
+     * 自動で.webpファイルへ変換
+     *
+     * @param file MultipartFile型の画像
+     * @return String ファイル名
+     */
     public String saveImage(MultipartFile file) throws IOException {
         // アップロードディレクトリの作成
         Path uploadPath = Paths.get(uploadDir);
