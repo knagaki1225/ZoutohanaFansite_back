@@ -17,18 +17,41 @@ public class ProjectService {
         this.projectRepository = projectRepository;
     }
 
+    /**
+     * 指定したidのProjectを取得
+     *
+     * @param id     取得するprojectのid
+     *
+     * @return Project
+     */
     public Project getProjectById(long id) {
         return projectRepository.getProjectById(id);
     }
 
+    /**
+     * 開催中のProjectを全件取得
+     *
+     * @return List<Project>
+     */
     public List<Project> getAllOngoingProjects(){
         return projectRepository.getAllOngoingProjects();
     }
 
+    /**
+     * すべてのProjectを取得
+     *
+     * @return List<Project>
+     */
     public List<Project> getAllPastProjects(){
         return projectRepository.getAllPastProjects();
     }
 
+    /**
+     * 次のステータスまであと何日か取得
+     *
+     * @param project 情報が欲しいProject
+     * @return List<Project>
+     */
     public Integer getLastDate(Project project){
         LocalDateTime targetDate;
         LocalDateTime now = LocalDateTime.now();
@@ -48,6 +71,12 @@ public class ProjectService {
         return (int) ChronoUnit.DAYS.between(now.toLocalDate(), targetDate.toLocalDate());
     }
 
+    /**
+     * urlKeyを指定してProjectを取得
+     *
+     * @param urlKey 指定するurlKey
+     * @return Project
+     */
     public Project getProjectByUrlKey(String urlKey){
         return projectRepository.getProjectByUrlKey(urlKey);
     }
