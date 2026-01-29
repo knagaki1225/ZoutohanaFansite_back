@@ -1,6 +1,7 @@
 package com.example.zoutohanafansite.controller;
 
 import com.example.zoutohanafansite.entity.admin.project.AdminDashProject;
+import com.example.zoutohanafansite.entity.admin.project.AdminProjectCard;
 import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.service.ProjectService;
 import org.springframework.stereotype.Controller;
@@ -22,12 +23,15 @@ public class AdminController {
 
     @GetMapping("/dash")
     public String admin(Model model){
-        List<Project> projects = projectService.getAllOngoingProjects();
-        List<AdminDashProject> adminDashProjects = new ArrayList<>();
-        for(Project project : projects){
-            adminDashProjects.add(new AdminDashProject(project));
-        }
-        model.addAttribute("projects",adminDashProjects);
+//        List<Project> projects = projectService.getAllOngoingProjects();
+//        List<AdminDashProject> adminDashProjects = new ArrayList<>();
+//        for(Project project : projects){
+//            adminDashProjects.add(new AdminDashProject(project));
+//        }
+//        model.addAttribute("projects",adminDashProjects);
+
+        List<AdminProjectCard> projects = projectService.getAllOngoingProjectsAdmin();
+        model.addAttribute("projects", projects);
 
         return "admin/top";
     }

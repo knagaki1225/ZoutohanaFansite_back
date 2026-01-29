@@ -1,5 +1,6 @@
 package com.example.zoutohanafansite.service;
 
+import com.example.zoutohanafansite.entity.admin.project.AdminProjectCard;
 import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.mapper.ProjectMapper;
 import com.example.zoutohanafansite.repository.ProjectRepository;
@@ -35,6 +36,15 @@ public class ProjectService {
      */
     public List<Project> getAllOngoingProjects(){
         return projectRepository.getAllOngoingProjects();
+    }
+
+    /**
+     * 開催中のProjectを全件取得(管理者画面の企画カード用)
+     *
+     * @return List<AdminProjectCard>
+     */
+    public List<AdminProjectCard> getAllOngoingProjectsAdmin(){
+        return projectRepository.getAllOngoingProjectsAdmin();
     }
 
     /**
@@ -79,5 +89,16 @@ public class ProjectService {
      */
     public Project getProjectByUrlKey(String urlKey){
         return projectRepository.getProjectByUrlKey(urlKey);
+    }
+
+    /**
+     * 指定したidのProjectを削除
+     *
+     * @param id     削除するprojectのid
+     *
+     * @return boolean
+     */
+    public boolean deleteProjectById(long id) {
+        return projectRepository.deleteProjectById(id);
     }
 }
