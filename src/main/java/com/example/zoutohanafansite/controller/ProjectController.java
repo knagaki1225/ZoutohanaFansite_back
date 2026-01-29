@@ -1,12 +1,14 @@
 package com.example.zoutohanafansite.controller;
 
+import com.example.zoutohanafansite.entity.admin.project.AdminProjectCard;
 import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.service.ProjectService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/project")
@@ -47,5 +49,31 @@ public class ProjectController {
         model.addAttribute("project", project);
 
         return returnUrl;
+    }
+
+//    @GetMapping("/allOngoingProject")
+//    public String allOngoingAdmin(Model model) {
+//        List<AdminProjectCard> projects = projectService.getAllOngoingProjectsAdmin();
+//        model.addAttribute("projects", projects);
+//
+//        return "admin/top";
+//    }
+
+    @PostMapping("/delete")
+    public String projectDelete(@RequestParam Long projectId,
+                                @RequestParam String urlKey,
+                                HttpServletRequest request) {
+        Project targetProject = projectService.getProjectById(projectId);
+        String referer = request.getHeader("Referer");
+
+        if(targetProject.getUrlKey().equals(urlKey)) {  /* 確認入力が正しいなら削除させる */
+            projectService.deleteProjectById(projectId);
+
+            if (referer == ("admin/project_edit/" +  urlKey)) {
+                return "redirect:admin/project_list";
+            }
+        }
+
+        return "redirect:" + referer;
     }
 }

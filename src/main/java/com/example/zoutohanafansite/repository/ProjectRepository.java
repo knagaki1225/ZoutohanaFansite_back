@@ -1,5 +1,6 @@
 package com.example.zoutohanafansite.repository;
 
+import com.example.zoutohanafansite.entity.admin.project.AdminProjectCard;
 import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.mapper.ProjectMapper;
 import org.springframework.stereotype.Repository;
@@ -22,11 +23,19 @@ public class ProjectRepository {
         return projectMapper.getAllOngoingProjects();
     }
 
+    public List<AdminProjectCard> getAllOngoingProjectsAdmin(){
+        return projectMapper.getAllOngoingProjectsAdmin();
+    }
+
     public List<Project> getAllPastProjects(){
         return projectMapper.getAllPastProjects();
     }
 
     public Project getProjectByUrlKey(String urlKey){
         return projectMapper.getProjectByUrlKey(urlKey);
+    }
+
+    public boolean deleteProjectById(long id) {
+        return projectMapper.deleteProjectById(id);
     }
 }
