@@ -197,11 +197,11 @@ public class ReviewService {
      * @param idList
      * @return Review
      */
-    public Review selectReviewByUrlKeyAndIdList(String urlKey, List<String> idList){
-        List<Long> ids = new ArrayList<>();
-        for(String id : idList){
-            ids.add(Long.parseLong(id));
-        }
-        return reviewRepository.selectReviewByUrlKeyAndIdList(urlKey, ids);
-    }
+//    public Review selectReviewByUrlKeyAndIdList(String urlKey, List<String> idList){
+//        List<Long> ids = new ArrayList<>();
+//        for(String id : idList){
+//            ids.add(Long.parseLong(id));
+//        }
+//        return reviewRepository.selectReviewByUrlKeyAndIdList(urlKey, ids);
+//    }
 }

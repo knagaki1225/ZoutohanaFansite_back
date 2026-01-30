@@ -8,6 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -87,5 +89,13 @@ public class UserService {
         userRepository.deleteUser(id);
     }
 
-
+    /**
+     * ユーザー全件取得
+     *
+     * @param sort 並び順
+     * @return List<User>
+     */
+    public List<User> getAllUsers(String sort, String keyword) {
+        return userRepository.getAllUsers(sort, keyword);
+    }
 }

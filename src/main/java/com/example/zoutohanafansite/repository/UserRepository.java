@@ -4,6 +4,8 @@ import com.example.zoutohanafansite.entity.auth.User;
 import com.example.zoutohanafansite.mapper.UserMapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class UserRepository {
     private final UserMapper userMapper;
@@ -14,6 +16,10 @@ public class UserRepository {
 
     public User getUserByLoginId(String loginId){
         return userMapper.getUserByLoginId(loginId);
+    }
+
+    public List<User> getAllUsers(String sort, String keyword) {
+        return userMapper.getAllUsers(sort, keyword);
     }
 
     public void insertUser(User user){
