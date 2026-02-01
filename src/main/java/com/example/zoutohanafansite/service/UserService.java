@@ -3,6 +3,7 @@ package com.example.zoutohanafansite.service;
 import com.example.zoutohanafansite.entity.auth.User;
 import com.example.zoutohanafansite.entity.form.NewPasswordForm;
 import com.example.zoutohanafansite.entity.form.PasswordResetForm;
+import com.example.zoutohanafansite.entity.form.UserSearchForm;
 import com.example.zoutohanafansite.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -92,10 +93,10 @@ public class UserService {
     /**
      * ユーザー全件取得
      *
-     * @param sort 並び順
+     * @param form 検索条件
      * @return List<User>
      */
-    public List<User> getAllUsers(String sort, String keyword) {
-        return userRepository.getAllUsers(sort, keyword);
+    public List<User> getAllUsers(UserSearchForm form) {
+        return userRepository.getAllUsers(form);
     }
 }

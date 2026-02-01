@@ -3,6 +3,7 @@ package com.example.zoutohanafansite.controller;
 import com.example.zoutohanafansite.entity.admin.project.AdminDashProject;
 import com.example.zoutohanafansite.entity.admin.project.AdminProjectCard;
 import com.example.zoutohanafansite.entity.auth.User;
+import com.example.zoutohanafansite.entity.form.UserSearchForm;
 import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.service.ProjectService;
 import com.example.zoutohanafansite.service.UserService;
@@ -41,14 +42,10 @@ public class AdminController {
         return "admin/top";
     }
     @GetMapping("/account/list")
-    public String accountList(@RequestParam(required = false, defaultValue="created_desc") String sort,
-                              @RequestParam(required = false) String keyword,
-                              Model model){
-        List<User> users = userService.getAllUsers(sort, keyword);
+    public String accountList(UserSearchForm form, Model model){
+        List<User> users = userService.getAllUsers(form);
         model.addAttribute("users", users);
-        model.addAttribute("sort", sort);
-        model.addAttribute("keyword", keyword);
-
+        model.addAttribute("form", form);
         return "admin/account_list";
     }
 

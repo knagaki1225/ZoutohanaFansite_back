@@ -1,6 +1,7 @@
 package com.example.zoutohanafansite.repository;
 
 import com.example.zoutohanafansite.entity.auth.User;
+import com.example.zoutohanafansite.entity.form.UserSearchForm;
 import com.example.zoutohanafansite.mapper.UserMapper;
 import org.springframework.stereotype.Repository;
 
@@ -18,8 +19,8 @@ public class UserRepository {
         return userMapper.getUserByLoginId(loginId);
     }
 
-    public List<User> getAllUsers(String sort, String keyword) {
-        return userMapper.getAllUsers(sort, keyword);
+    public List<User> getAllUsers(UserSearchForm form) {
+        return userMapper.getAllUsers(form);
     }
 
     public void insertUser(User user){
