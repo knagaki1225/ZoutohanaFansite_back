@@ -1,12 +1,18 @@
 package com.example.zoutohanafansite.mapper;
 
 import com.example.zoutohanafansite.entity.auth.User;
+import com.example.zoutohanafansite.entity.form.UserSearchForm;
 import org.apache.ibatis.annotations.*;
+
+import java.util.List;
 
 @Mapper
 public interface UserMapper {
     @Select("SELECT * FROM users WHERE login_id = #{loginId} AND deleted = false")
     User getUserByLoginId(String loginId);
+
+    // SQLが長く複雑になったのでsrc/main/resources/mapper/UserMapper.xmlに移動
+    List<User> getAllUsers(UserSearchForm form);
 
     @Insert("""
             INSERT INTO users 
@@ -22,6 +28,4 @@ public interface UserMapper {
 
     @Update("UPDATE users SET deleted = true WHERE id = #{id}")
     void deleteUser(long id);
-
-
 }
