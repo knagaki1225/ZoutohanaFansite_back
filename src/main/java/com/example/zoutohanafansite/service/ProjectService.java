@@ -101,4 +101,15 @@ public class ProjectService {
     public boolean deleteProjectById(long id) {
         return projectRepository.deleteProjectById(id);
     }
+
+    /**
+     * 指定したurlKeyのProjectの投票終了日を取得
+     *
+     * @param urlKey 指定するurlKey
+     *
+     * @return LocalDateTime
+     */
+    public LocalDateTime getVotingEndAt(String urlKey){
+        return projectRepository.selectVotingEndAt(urlKey);
+    }
 }

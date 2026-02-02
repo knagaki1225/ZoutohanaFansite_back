@@ -1,5 +1,6 @@
 package com.example.zoutohanafansite.entity.review;
 
+import com.example.zoutohanafansite.service.ProjectService;
 import lombok.Data;
 
 @Data
@@ -13,6 +14,7 @@ public class ReviewApiData {
     private String gender;
     private String address;
     private String text;
+    private Integer voteCount;
 
     public ReviewApiData(Review review, String imageUrl) {
         this.id = review.getId();
@@ -24,5 +26,6 @@ public class ReviewApiData {
         this.gender = review.getUserGender().getLabel();
         this.address = review.getUserAddress();
         this.text = review.getUserSelfIntroduction();
+        this.voteCount = review.getVoteCount();
     }
 }
