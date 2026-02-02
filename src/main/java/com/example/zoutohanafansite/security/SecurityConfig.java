@@ -54,7 +54,10 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").authenticated()
                         .anyRequest().permitAll()
                 )
-                .csrf(csrf -> csrf.csrfTokenRepository(new HttpSessionCsrfTokenRepository()))
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/api/**") // API関連はCSRFチェックをスキップ
+                        .csrfTokenRepository(new HttpSessionCsrfTokenRepository())
+                )
                 .formLogin(form -> form
                         .loginProcessingUrl("/login")
                         .loginPage("/login")
