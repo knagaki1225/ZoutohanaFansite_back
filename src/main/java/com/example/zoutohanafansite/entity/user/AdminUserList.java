@@ -4,6 +4,8 @@ import com.example.zoutohanafansite.entity.enums.UserGender;
 import com.example.zoutohanafansite.entity.enums.UserStatus;
 import lombok.Data;
 
+import java.time.Year;
+
 @Data
 public class AdminUserList {
     private long id;

@@ -3,10 +3,13 @@ package com.example.zoutohanafansite.service;
 import com.example.zoutohanafansite.entity.auth.User;
 import com.example.zoutohanafansite.entity.form.NewPasswordForm;
 import com.example.zoutohanafansite.entity.form.PasswordResetForm;
+import com.example.zoutohanafansite.entity.form.UserSearchForm;
 import com.example.zoutohanafansite.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Service
 public class UserService {
@@ -87,5 +90,13 @@ public class UserService {
         userRepository.deleteUser(id);
     }
 
-
+    /**
+     * ユーザー全件取得
+     *
+     * @param form 検索条件
+     * @return List<User>
+     */
+    public List<User> getAllUsers(UserSearchForm form) {
+        return userRepository.getAllUsers(form);
+    }
 }

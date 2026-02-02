@@ -3,8 +3,8 @@ package com.example.zoutohanafansite.entity.enums;
 import java.util.Arrays;
 
 public enum UserGender {
-    MALE("MALE", "男"),
-    FEMALE("FEMALE", "女"),
+    MALE("MALE", "男性"),
+    FEMALE("FEMALE", "女性"),
     UNSPECIFIED("UNSPECIFIED", "選択しない");
 
     private final String dbValue;
