@@ -58,4 +58,8 @@ public class ReviewRepository {
     public void decrementVoteCount(long id){
         reviewMapper.decrementVoteCount(id);
     }
+
+    public List<Review> selectReviewByUrlKeyAndIdList(String urlKey, List<Long> idList){
+        return reviewMapper.selectReviewByUrlKeyAndIdList(urlKey, idList);
+    }
 }

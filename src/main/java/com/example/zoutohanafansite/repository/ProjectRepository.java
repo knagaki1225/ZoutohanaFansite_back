@@ -5,6 +5,7 @@ import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.mapper.ProjectMapper;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -37,5 +38,9 @@ public class ProjectRepository {
 
     public boolean deleteProjectById(long id) {
         return projectMapper.deleteProjectById(id);
+    }
+
+    public LocalDateTime selectVotingEndAt(String urlKey){
+        return projectMapper.selectVotingEndAt(urlKey);
     }
 }

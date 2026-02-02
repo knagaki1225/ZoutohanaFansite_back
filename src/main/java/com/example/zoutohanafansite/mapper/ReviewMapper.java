@@ -108,6 +108,7 @@ public interface ReviewMapper {
         JOIN projects p ON r.project_id = p.id
         WHERE p.url_key = #{urlKey}
         AND r.first_stage_passed = true
+        ORDER BY r.vote_count DESC
     """)
     List<Review> selectReviewsByUrlKey(String urlKey);
 
@@ -125,4 +126,17 @@ public interface ReviewMapper {
           AND vote_count > 0
     """)
     void decrementVoteCount(long id);
+
+    @Select("""
+        <script>
+            SELECT r.* FROM reviews r
+            INNER JOIN projects p ON r.project_id = p.id
+            WHERE p.url_key = #{urlKey}
+                AND r.id IN
+                    <foreach item="id" collection="idList" open="(" separator="," close=")">
+                        #{id}
+                    </foreach>
+        </script>
+    """)
+    List<Review> selectReviewByUrlKeyAndIdList(String urlKey, List<Long> idList);
 }
