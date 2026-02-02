@@ -38,8 +38,18 @@ public class UserService {
      * @param loginId ログインID
      * @return User
      */
-    public User getUserById(String loginId){
+    public User getUserByLoginId(String loginId){
         return userRepository.getUserByLoginId(loginId);
+    }
+
+    /**
+     * ID指定でのユーザー取得
+     *
+     * @param id userId
+     * @return User
+     */
+    public User getUserById(long id){
+        return userRepository.getUserById(id);
     }
 
     /**
@@ -49,7 +59,7 @@ public class UserService {
      * @return boolean
      */
     public boolean checkSecurityKey(PasswordResetForm passwordResetForm){
-        User user = getUserById(passwordResetForm.getLoginId());
+        User user = getUserByLoginId(passwordResetForm.getLoginId());
         return passwordEncoder.matches(passwordResetForm.getSecurityKey(), user.getSecurityKey());
     }
 
@@ -82,6 +92,18 @@ public class UserService {
     }
 
     /**
+     * ステータス更新
+     *
+     * @param status ステータス
+     * @param id userId
+     */
+    public void updateStatus(String status, long id) {
+        if(status.equals("ACTIVE") ||  status.equals("SUSPENDED") ||  status.equals("BAN")) {
+            userRepository.updateStatus(status, id);
+        }
+    }
+
+    /**
      * アカウント削除
      *
      * @param id userId
@@ -93,7 +115,9 @@ public class UserService {
     /**
      * ユーザー全件取得
      *
-     * @param form 検索条件
+     * @param form UserSearchForm(検索条件)
+     *              String sort, keyword
+     *              List<String> status, gender, ageGroup, address
      * @return List<User>
      */
     public List<User> getAllUsers(UserSearchForm form) {

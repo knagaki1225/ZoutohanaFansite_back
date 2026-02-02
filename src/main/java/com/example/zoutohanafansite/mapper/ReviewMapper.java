@@ -2,6 +2,7 @@ package com.example.zoutohanafansite.mapper;
 
 import com.example.zoutohanafansite.entity.form.ReviewForm;
 import com.example.zoutohanafansite.entity.review.Review;
+import com.example.zoutohanafansite.entity.review.ReviewCard;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -74,6 +75,30 @@ public interface ReviewMapper {
 
     @Select("SELECT * FROM reviews WHERE user_id = #{userId}")
     List<Review> selectReviewsByUserId(long userId);
+
+    @Select("""
+        SELECT
+            r.*,
+            p.name AS project_name
+        FROM reviews r
+        JOIN projects p ON r.project_id = p.id
+        WHERE r.id = #{id}
+        AND r.deleted = FALSE
+        AND r.draft = FALSE
+    """)
+    ReviewCard selectReviewCardById(long id);
+
+    @Select("""
+        SELECT
+            r.*,
+            p.name AS project_name
+        FROM reviews r
+        JOIN projects p ON r.project_id = p.id
+        WHERE r.user_id = #{userId}
+        AND r.deleted = FALSE
+        AND r.draft = FALSE
+    """)
+    List<ReviewCard> selectReviewCardsByUserId(long userId);
 
     @Select("""
             SELECT id FROM reviews 

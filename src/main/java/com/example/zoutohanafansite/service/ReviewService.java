@@ -5,6 +5,7 @@ import com.example.zoutohanafansite.entity.pagination.PaginationView;
 import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.entity.review.Review;
 import com.example.zoutohanafansite.entity.review.ReviewApiData;
+import com.example.zoutohanafansite.entity.review.ReviewCard;
 import com.example.zoutohanafansite.entity.review.ReviewPagination;
 import com.example.zoutohanafansite.repository.ReviewRepository;
 import org.springframework.stereotype.Service;
@@ -71,6 +72,26 @@ public class ReviewService {
      **/
     public List<Review> getReviewByUserId(long userId){
         return reviewRepository.selectReviewByUserId(userId);
+    }
+
+    /**
+     * reviewIdを指定してreview(プロジェクト名あり)を取得
+     *
+     * @param id 書評のid
+     * @return ReviewCard
+     **/
+    public ReviewCard getReviewCardById(long id){
+        return reviewRepository.selectReviewCardById(id);
+    }
+
+    /**
+     * 指定したuserのreview(プロジェクト名あり)を全件取得
+     *
+     * @param userId 指定するuserId
+     * @return List<ReviewCard>
+     **/
+    public List<ReviewCard> getReviewCardsByUserId(long userId){
+        return reviewRepository.selectReviewCardsByUserId(userId);
     }
 
     /**

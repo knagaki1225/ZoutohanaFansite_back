@@ -2,6 +2,7 @@ package com.example.zoutohanafansite.repository;
 
 import com.example.zoutohanafansite.entity.form.ReviewForm;
 import com.example.zoutohanafansite.entity.review.Review;
+import com.example.zoutohanafansite.entity.review.ReviewCard;
 import com.example.zoutohanafansite.mapper.ReviewMapper;
 import org.springframework.stereotype.Repository;
 
@@ -33,6 +34,14 @@ public class ReviewRepository {
 
     public List<Review> selectReviewByUserId(long userId){
         return reviewMapper.selectReviewsByUserId(userId);
+    }
+
+    public ReviewCard selectReviewCardById(long userId) {
+        return reviewMapper.selectReviewCardById(userId);
+    }
+
+    public List<ReviewCard> selectReviewCardsByUserId(long userId) {
+        return reviewMapper.selectReviewCardsByUserId(userId);
     }
 
     public Long selectDraftId(long projectId, long userId){

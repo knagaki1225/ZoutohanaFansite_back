@@ -5,13 +5,17 @@ import com.example.zoutohanafansite.entity.admin.project.AdminProjectCard;
 import com.example.zoutohanafansite.entity.auth.User;
 import com.example.zoutohanafansite.entity.form.UserSearchForm;
 import com.example.zoutohanafansite.entity.project.Project;
+import com.example.zoutohanafansite.entity.review.Review;
+import com.example.zoutohanafansite.entity.review.ReviewCard;
+import com.example.zoutohanafansite.repository.ReviewRepository;
+import com.example.zoutohanafansite.security.CustomUserDetails;
 import com.example.zoutohanafansite.service.ProjectService;
+import com.example.zoutohanafansite.service.ReviewService;
 import com.example.zoutohanafansite.service.UserService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +25,12 @@ import java.util.List;
 public class AdminController {
     private final ProjectService projectService;
     private final UserService userService;
+    private final ReviewService reviewService;
 
-    public AdminController(ProjectService projectService, UserService userService) {
+    public AdminController(ProjectService projectService, UserService userService, ReviewService reviewService) {
         this.projectService = projectService;
         this.userService = userService;
+        this.reviewService = reviewService;
     }
 
     @GetMapping("/dash")
@@ -50,9 +56,28 @@ public class AdminController {
     }
 
     @GetMapping("/account/view")
-    public String accountView(@RequestParam String loginId, Model model) {
-        User user = userService.getUserById(loginId);
+    public String accountView(@RequestParam(value="loginId", required = false) String loginId, Model model) {
+        if (loginId == null || loginId.isEmpty()) {
+            return "redirect:/admin/account/list";
+        }
+        User user = userService.getUserByLoginId(loginId);
+        List<ReviewCard> reviews = reviewService.getReviewCardsByUserId(user.getId());
         model.addAttribute("user", user);
+        model.addAttribute("reviews", reviews);
         return "admin/account_view";
+    }
+
+    @PostMapping("/account/view")
+    public String accountStatusUpdate(String status, long id) {
+        userService.updateStatus(status, id);
+        User user = userService.getUserById(id);
+        return "redirect:/admin/account/view?loginId=" + user.getLoginId();
+    }
+
+    @GetMapping("/review/edit")
+    public String reviewView(@RequestParam long id, Model model) {
+        ReviewCard reviewCard = reviewService.getReviewCardById(id);
+        model.addAttribute("review", reviewCard);
+        return "admin/review_edit";
     }
 }

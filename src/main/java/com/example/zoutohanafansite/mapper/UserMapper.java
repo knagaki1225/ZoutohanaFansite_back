@@ -11,6 +11,9 @@ public interface UserMapper {
     @Select("SELECT * FROM users WHERE login_id = #{loginId} AND deleted = false")
     User getUserByLoginId(String loginId);
 
+    @Select("SELECT * FROM users WHERE id = #{id} AND deleted = false")
+    User getUserById(long id);
+
     // SQLが長く複雑になったのでsrc/main/resources/mapper/UserMapper.xmlに移動
     List<User> getAllUsers(UserSearchForm form);
 
@@ -25,6 +28,9 @@ public interface UserMapper {
 
     @Update("UPDATE users SET password = #{password}, security_key = #{securityKey} WHERE login_id = #{loginId}")
     void updatePassword(String password, String securityKey, String loginId);
+
+    @Update("UPDATE users SET status = #{status} WHERE id = #{id}")
+    void updateStatus(@Param("status") String status, @Param("id") long id);
 
     @Update("UPDATE users SET deleted = true WHERE id = #{id}")
     void deleteUser(long id);

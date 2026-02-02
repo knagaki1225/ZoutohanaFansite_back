@@ -54,7 +54,7 @@ public class AuthenticationController {
 
     @GetMapping("/edit")
     public String accountEdit(Model model, @AuthenticationPrincipal CustomUserDetails customUser){
-        User user = userService.getUserById(customUser.getUsername());
+        User user = userService.getUserByLoginId(customUser.getUsername());
 
         AccountEditForm accountEditForm = new AccountEditForm();
         accountEditForm.setNickname(user.getNickname());

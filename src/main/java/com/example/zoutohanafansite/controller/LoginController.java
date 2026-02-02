@@ -37,7 +37,7 @@ public class LoginController {
     public String passwordReset(@RequestParam long id, PasswordResetForm passwordResetForm, RedirectAttributes redirectAttributes){
         if(userService.checkSecurityKey(passwordResetForm)){
             redirectAttributes.addFlashAttribute("alreadyCheck", true);
-            User user = userService.getUserById(passwordResetForm.getLoginId());
+            User user = userService.getUserByLoginId(passwordResetForm.getLoginId());
             redirectAttributes.addFlashAttribute("user", user);
             return "redirect:/password-reset/input-password?id="+id;
         }
