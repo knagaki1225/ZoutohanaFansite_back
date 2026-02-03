@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper
@@ -58,4 +59,9 @@ public interface ProjectMapper {
         WHERE id = #{id}
     """)
     boolean deleteProjectById(long id);
+
+    @Select("""
+        SELECT voting_end_at from projects WHERE url_key = #{urlKey} AND deleted = false
+    """)
+    LocalDateTime selectVotingEndAt(String urlKey);
 }

@@ -7,12 +7,11 @@ import java.util.List;
 
 @Data
 public class ReviewPagination {
-//    エラー起きるので仮作成
-    private PaginationInfo paginationInfo;
+    private PaginationInfo info;
     private List<ReviewApiData> reviews;
 
-    public ReviewPagination(PaginationInfo paginationInfo, List<ReviewApiData> reviews) {
-        this.paginationInfo = paginationInfo;
+    public ReviewPagination(PaginationInfo info, List<ReviewApiData> reviews) {
+        this.info = info;
         this.reviews = reviews;
     }
 }

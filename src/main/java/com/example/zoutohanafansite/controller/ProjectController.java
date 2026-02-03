@@ -22,27 +22,27 @@ public class ProjectController {
     @GetMapping("/{urlKey}")
     public String project(@PathVariable("urlKey") String urlKey, Model model) {
         Project project = projectService.getProjectByUrlKey(urlKey);
-        if (project == null) {
-            // 不正アクセス
-        }
+//        if (project == null) {
+//            // 不正アクセス
+//            return "project/first-ex";
+//        }
 
         String returnUrl = "project/first-ex";
 
         switch (project.getStatus()){
             case BEFORE_SUBMISSION :
-                break;
             case DURING_SUBMISSION :
-                break;
             case FIRST_PHASE:
+            case SECOND_PHASE_VERIFY:
                 break;
             case SECOND_PHASE_VOTING:
                 returnUrl = "project/first-review";
                 break;
-            case SECOND_PHASE_VERIFY:
-                break;
             case SECOND_PHASE_RESULT:
+                returnUrl = "project/nominate-works";
                 break;
             case AWARD_ANNOUNCEMENT:
+                returnUrl = "project/nominate-award";
                 break;
         }
 
