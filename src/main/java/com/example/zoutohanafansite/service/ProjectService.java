@@ -46,7 +46,7 @@ public class ProjectService {
      *              String sort, keyword
      *              List<String> status, published
      *              List<LocalDateTime> startAt, endAt
-     * @return List<AdminProjectCard>
+     * @return List<ProjectCard>
      */
     public List<ProjectCard> getAllProjects(ProjectSearchForm form){
         return projectRepository.getAllProjects(form);
@@ -64,7 +64,7 @@ public class ProjectService {
     /**
      * 開催中のProjectを全件取得(管理者画面の企画カード用)
      *
-     * @return List<AdminProjectCard>
+     * @return List<ProjectCard>
      */
     public List<ProjectCard> getAllOngoingProjectsAdmin(){
         return projectRepository.getAllOngoingProjectsAdmin();

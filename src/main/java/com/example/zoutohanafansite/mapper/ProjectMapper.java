@@ -16,6 +16,9 @@ public interface ProjectMapper {
     @Select("SELECT * FROM projects WHERE id = #{id}")
     Project getProjectById(long id);
 
+    // src/main/resources/mapper/ProjectMapper.xmlに移動
+    List<ProjectCard> getAllProjects(ProjectSearchForm form);
+
     @Select("""
             SELECT * FROM projects
                 WHERE published = true

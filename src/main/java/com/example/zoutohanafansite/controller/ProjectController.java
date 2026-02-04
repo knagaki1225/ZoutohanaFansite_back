@@ -1,6 +1,6 @@
 package com.example.zoutohanafansite.controller;
 
-import com.example.zoutohanafansite.entity.admin.project.AdminProjectCard;
+import com.example.zoutohanafansite.entity.admin.project.ProjectCard;
 import com.example.zoutohanafansite.entity.nominatedreview.NominatedReviewWork;
 import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.service.NominatedReviewService;
@@ -58,7 +58,7 @@ public class ProjectController {
 
 //    @GetMapping("/allOngoingProject")
 //    public String allOngoingAdmin(Model model) {
-//        List<AdminProjectCard> projects = projectService.getAllOngoingProjectsAdmin();
+//        List<ProjectCard> projects = projectService.getAllOngoingProjectsAdmin();
 //        model.addAttribute("projects", projects);
 //
 //        return "admin/top";
