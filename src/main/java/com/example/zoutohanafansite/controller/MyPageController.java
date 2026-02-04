@@ -35,7 +35,7 @@ public class MyPageController {
 
     @GetMapping
     public String mypage(Model model, @AuthenticationPrincipal CustomUserDetails customUserDetails){
-        User user = userService.getUserById(customUserDetails.getUsername());
+        User user = userService.getUserByLoginId(customUserDetails.getUsername());
         model.addAttribute("user", user);
 
         List<Project> ongoingProjects = projectService.getAllOngoingProjects();

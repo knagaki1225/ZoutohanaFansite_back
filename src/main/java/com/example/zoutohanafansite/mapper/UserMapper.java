@@ -29,6 +29,9 @@ public interface UserMapper {
     @Update("UPDATE users SET password = #{password}, security_key = #{securityKey} WHERE login_id = #{loginId}")
     void updatePassword(String password, String securityKey, String loginId);
 
+    @Update("UPDATE users SET status = #{status} WHERE id = #{id}")
+    void updateStatus(@Param("status") String status, @Param("id") long id);
+
     @Update("UPDATE users SET deleted = true WHERE id = #{id}")
     void deleteUser(long id);
 }

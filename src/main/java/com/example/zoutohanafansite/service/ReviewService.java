@@ -5,10 +5,12 @@ import com.example.zoutohanafansite.entity.pagination.PaginationView;
 import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.entity.review.Review;
 import com.example.zoutohanafansite.entity.review.ReviewApiData;
+import com.example.zoutohanafansite.entity.review.ReviewCard;
 import com.example.zoutohanafansite.entity.review.ReviewPagination;
 import com.example.zoutohanafansite.repository.ReviewRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -71,6 +73,26 @@ public class ReviewService {
      **/
     public List<Review> getReviewByUserId(long userId){
         return reviewRepository.selectReviewByUserId(userId);
+    }
+
+    /**
+     * reviewIdを指定してreview(プロジェクト名あり)を取得
+     *
+     * @param id 書評のid
+     * @return ReviewCard
+     **/
+    public ReviewCard getReviewCardById(long id){
+        return reviewRepository.selectReviewCardById(id);
+    }
+
+    /**
+     * 指定したuserのreview(プロジェクト名あり)を全件取得
+     *
+     * @param userId 指定するuserId
+     * @return List<ReviewCard>
+     **/
+    public List<ReviewCard> getReviewCardsByUserId(long userId){
+        return reviewRepository.selectReviewCardsByUserId(userId);
     }
 
     /**
@@ -162,10 +184,17 @@ public class ReviewService {
     public ReviewPagination getReviewApiData(String urlKey, int page){
         List<Review> reviews = selectReviewsByUrlKey(urlKey);
         List<ReviewApiData> reviewApiDataList = new ArrayList<>();
+        LocalDateTime votingEndAt = projectService.getVotingEndAt(urlKey);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime oneWeekLater = now.plusWeeks(1);
+        boolean isVoteCount = votingEndAt.isAfter(now) && votingEndAt.isBefore(oneWeekLater.plusNanos(1));
 
         PaginationView paginationView = paginationService.getPaginationView(page, reviews.size(), 10);
         for(int i = paginationView.getStartNum(); i < paginationView.getEndNum(); i++){
             ReviewApiData reviewApiData = new ReviewApiData(reviews.get(i), "/api/image/book" + (i % 4 + 1) + ".png");
+            if(isVoteCount){
+                reviewApiData.setVoteCount(null);
+            }
             reviewApiDataList.add(reviewApiData);
         }
 
@@ -197,11 +226,11 @@ public class ReviewService {
      * @param idList
      * @return Review
      */
-//    public Review selectReviewByUrlKeyAndIdList(String urlKey, List<String> idList){
-//        List<Long> ids = new ArrayList<>();
-//        for(String id : idList){
-//            ids.add(Long.parseLong(id));
-//        }
-//        return reviewRepository.selectReviewByUrlKeyAndIdList(urlKey, ids);
-//    }
+    public List<Review> selectReviewByUrlKeyAndIdList(String urlKey, List<String> idList){
+        List<Long> ids = new ArrayList<>();
+        for(String id : idList){
+            ids.add(Long.parseLong(id));
+        }
+        return reviewRepository.selectReviewByUrlKeyAndIdList(urlKey, ids);
+    }
 }

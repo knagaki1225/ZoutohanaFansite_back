@@ -19,6 +19,10 @@ public class UserRepository {
         return userMapper.getUserByLoginId(loginId);
     }
 
+    public User getUserById(long id){
+        return userMapper.getUserById(id);
+    }
+
     public List<User> getAllUsers(UserSearchForm form) {
         return userMapper.getAllUsers(form);
     }
@@ -29,6 +33,10 @@ public class UserRepository {
 
     public void updatePassword(String password, String securityKey, String loginId){
         userMapper.updatePassword(password,securityKey,loginId);
+    }
+
+    public void updateStatus(String status, long id){
+        userMapper.updateStatus(status,id);
     }
 
     public void deleteUser(long id){
