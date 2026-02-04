@@ -1,8 +1,11 @@
 package com.example.zoutohanafansite.controller;
 
+import com.example.zoutohanafansite.entity.nominatedreview.NominatedReview;
 import com.example.zoutohanafansite.entity.review.Review;
 import com.example.zoutohanafansite.entity.review.ReviewApiData;
+import com.example.zoutohanafansite.entity.review.ReviewAward;
 import com.example.zoutohanafansite.entity.review.ReviewPagination;
+import com.example.zoutohanafansite.service.NominatedReviewService;
 import com.example.zoutohanafansite.service.ProjectService;
 import com.example.zoutohanafansite.service.ReviewService;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +21,12 @@ public class ReviewRestController {
 
     private final ReviewService reviewService;
     private final ProjectService projectService;
+    private final NominatedReviewService nominatedReviewService;
 
-    public ReviewRestController(ReviewService reviewService, ProjectService projectService) {
+    public ReviewRestController(ReviewService reviewService, ProjectService projectService, NominatedReviewService nominatedReviewService) {
         this.reviewService = reviewService;
         this.projectService = projectService;
+        this.nominatedReviewService = nominatedReviewService;
     }
 
     @GetMapping("/{urlKey}")
@@ -79,5 +84,40 @@ public class ReviewRestController {
             i++;
         }
         return ResponseEntity.ok(reviewApiDataList);
+    }
+
+    @GetMapping("/data/{id}")
+    public ResponseEntity<ReviewApiData> getReviewDataById(@PathVariable long id){
+        Review review = reviewService.getReviewById(id);
+        ReviewApiData reviewApiData = new ReviewApiData(review, null);
+        return ResponseEntity.ok(reviewApiData);
+    }
+
+    @GetMapping("/award/{urlKey}")
+    public ResponseEntity<ReviewAward> getAward(@PathVariable String urlKey){
+        NominatedReview review = nominatedReviewService.getAwardReviewByUrlKey(urlKey);
+        if(review == null){
+            return ResponseEntity.notFound().build();
+        }
+        ReviewAward reviewAward = new ReviewAward(review, "/api/image/book1.png", "/api/image/icon"+review.getUserIcon()+".png");
+        return ResponseEntity.ok(reviewAward);
+    }
+
+    @GetMapping("/nominate/{urlKey}")
+    public ResponseEntity<List<ReviewAward>> getNominate(@PathVariable String urlKey){
+        List<ReviewAward> reviews = nominatedReviewService.getNotAwardNominatedReviewsByUrlKey(urlKey);
+        if(reviews == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(reviews);
+    }
+
+    @GetMapping("/participation/{urlKey}")
+    public ResponseEntity<List<ReviewAward>> getParticipation(@PathVariable String urlKey){
+        List<ReviewAward> reviews = nominatedReviewService.getParticipation(urlKey);
+        if(reviews == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(reviews);
     }
 }
