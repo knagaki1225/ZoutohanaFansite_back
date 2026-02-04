@@ -15,6 +15,7 @@ public class Review {
     private int userAgeGroup;
     private UserGender userGender;  // enums/UserGender
     private String userSelfIntroduction;
+    private int userIcon;
     private Long bookIsbn;
     private String bookTitle;
     private String bookPublisher;

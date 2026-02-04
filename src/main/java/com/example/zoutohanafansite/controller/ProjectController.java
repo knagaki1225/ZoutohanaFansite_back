@@ -1,7 +1,9 @@
 package com.example.zoutohanafansite.controller;
 
 import com.example.zoutohanafansite.entity.admin.project.AdminProjectCard;
+import com.example.zoutohanafansite.entity.nominatedreview.NominatedReviewWork;
 import com.example.zoutohanafansite.entity.project.Project;
+import com.example.zoutohanafansite.service.NominatedReviewService;
 import com.example.zoutohanafansite.service.ProjectService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
@@ -14,9 +16,11 @@ import java.util.List;
 @RequestMapping("/project")
 public class ProjectController {
     private final ProjectService projectService;
+    private final NominatedReviewService nominatedReviewService;
 
-    public ProjectController(ProjectService projectService) {
+    public ProjectController(ProjectService projectService, NominatedReviewService nominatedReviewService) {
         this.projectService = projectService;
+        this.nominatedReviewService = nominatedReviewService;
     }
 
     @GetMapping("/{urlKey}")
@@ -40,6 +44,9 @@ public class ProjectController {
                 break;
             case SECOND_PHASE_RESULT:
                 returnUrl = "project/nominate-works";
+
+                List<NominatedReviewWork> reviews = nominatedReviewService.getNominatedReviewsByProjectId(project.getId());
+                model.addAttribute("reviews", reviews);
                 break;
             case AWARD_ANNOUNCEMENT:
                 returnUrl = "project/nominate-award";
