@@ -14,7 +14,7 @@ public interface UserMapper {
     @Select("SELECT * FROM users WHERE id = #{id} AND deleted = false")
     User getUserById(long id);
 
-    // SQLが長く複雑になったのでsrc/main/resources/mapper/UserMapper.xmlに移動
+    // src/main/resources/mapper/UserMapper.xmlに移動
     List<User> getAllUsers(UserSearchForm form);
 
     @Insert("""

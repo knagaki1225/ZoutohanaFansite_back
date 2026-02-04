@@ -1,6 +1,7 @@
 package com.example.zoutohanafansite.service;
 
 import com.example.zoutohanafansite.entity.admin.project.AdminProjectCard;
+import com.example.zoutohanafansite.entity.form.ProjectSearchForm;
 import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.mapper.ProjectMapper;
 import com.example.zoutohanafansite.repository.ProjectRepository;
@@ -27,6 +28,19 @@ public class ProjectService {
      */
     public Project getProjectById(long id) {
         return projectRepository.getProjectById(id);
+    }
+
+    /**
+     * Projectを全件取得(管理者用)
+     *
+     * @oaram form ProjectSearchForm(検索条件)
+     *              String sort, keyword
+     *              List<String> status, published
+     *              List<LocalDateTime> startAt, endAt
+     * @return List<AdminProjectCard>
+     */
+    public List<AdminProjectCard> getAllProjects(ProjectSearchForm form){
+        return projectRepository.getAllProjects(form);
     }
 
     /**

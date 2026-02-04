@@ -8,7 +8,7 @@ public enum ProjectStatus {
     FIRST_PHASE("FIRST_PHASE", "一次審査中", 3),
     SECOND_PHASE_VOTING("SECOND_PHASE_VOTING", "二次審査(投票)中",4),
     SECOND_PHASE_VERIFY("SECOND_PHASE_VERIFY", "二次審査(確認)中", 5),
-    SECOND_PHASE_RESULT("SHOW_NOMINATED", "二次審査結果発表", 6),
+    SECOND_PHASE_RESULT("SECOND_PHASE_RESULT", "二次審査結果発表", 6),
     AWARD_ANNOUNCEMENT("AWARD_ANNOUNCEMENT", "大賞発表", 7);
 
     private final String dbValue;

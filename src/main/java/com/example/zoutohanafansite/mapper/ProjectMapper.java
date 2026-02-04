@@ -1,6 +1,7 @@
 package com.example.zoutohanafansite.mapper;
 
 import com.example.zoutohanafansite.entity.admin.project.AdminProjectCard;
+import com.example.zoutohanafansite.entity.form.ProjectSearchForm;
 import com.example.zoutohanafansite.entity.project.Project;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -14,6 +15,9 @@ public interface ProjectMapper {
 
     @Select("SELECT * FROM projects WHERE id = #{id}")
     Project getProjectById(long id);
+
+    // src/main/resources/mapper/ProjectMapper.xmlに移動
+    List<AdminProjectCard> getAllProjects(ProjectSearchForm form);
 
     @Select("""
             SELECT * FROM projects
