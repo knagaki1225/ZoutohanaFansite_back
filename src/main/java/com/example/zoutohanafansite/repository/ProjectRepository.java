@@ -1,6 +1,7 @@
 package com.example.zoutohanafansite.repository;
 
 import com.example.zoutohanafansite.entity.admin.project.AdminProjectCard;
+import com.example.zoutohanafansite.entity.form.ProjectSearchForm;
 import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.mapper.ProjectMapper;
 import org.springframework.stereotype.Repository;
@@ -17,6 +18,10 @@ public class ProjectRepository {
 
     public Project getProjectById(long id) {
         return projectMapper.getProjectById(id);
+    }
+
+    public List<AdminProjectCard> getAllProjects(ProjectSearchForm form){
+        return projectMapper.getAllProjects(form);
     }
 
     public List<Project> getAllOngoingProjects(){
