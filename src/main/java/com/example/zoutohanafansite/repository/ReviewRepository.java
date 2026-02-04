@@ -1,8 +1,9 @@
 package com.example.zoutohanafansite.repository;
 
+import com.example.zoutohanafansite.entity.admin.review.NominatedReviewCard;
 import com.example.zoutohanafansite.entity.form.ReviewForm;
 import com.example.zoutohanafansite.entity.review.Review;
-import com.example.zoutohanafansite.entity.review.ReviewCard;
+import com.example.zoutohanafansite.entity.admin.review.ReviewCard;
 import com.example.zoutohanafansite.mapper.ReviewMapper;
 import org.springframework.stereotype.Repository;
 
@@ -70,5 +71,9 @@ public class ReviewRepository {
 
     public List<Review> selectReviewByUrlKeyAndIdList(String urlKey, List<Long> idList){
         return reviewMapper.selectReviewByUrlKeyAndIdList(urlKey, idList);
+    }
+
+    public List<NominatedReviewCard> selectNominatedReviewCardByProjectId(long projectId) {
+        return reviewMapper.selectNominatedReviewCardByProjectId(projectId);
     }
 }

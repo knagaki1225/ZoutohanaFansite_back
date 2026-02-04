@@ -1,11 +1,11 @@
 package com.example.zoutohanafansite.service;
 
+import com.example.zoutohanafansite.entity.admin.review.NominatedReviewCard;
 import com.example.zoutohanafansite.entity.form.ReviewForm;
 import com.example.zoutohanafansite.entity.pagination.PaginationView;
-import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.entity.review.Review;
 import com.example.zoutohanafansite.entity.review.ReviewApiData;
-import com.example.zoutohanafansite.entity.review.ReviewCard;
+import com.example.zoutohanafansite.entity.admin.review.ReviewCard;
 import com.example.zoutohanafansite.entity.review.ReviewPagination;
 import com.example.zoutohanafansite.repository.ReviewRepository;
 import org.springframework.stereotype.Service;
@@ -232,5 +232,15 @@ public class ReviewService {
             ids.add(Long.parseLong(id));
         }
         return reviewRepository.selectReviewByUrlKeyAndIdList(urlKey, ids);
+    }
+
+    /**
+     * 指定したidのprojectの、nominated_reviewsを全取得(企画編集・情報用)
+     *
+     * @param projectId
+     * @return NominatedReviewCard
+     */
+    public List<NominatedReviewCard> getNominatedReviewCardByProjectId(long projectId) {
+        return reviewRepository.selectNominatedReviewCardByProjectId(projectId);
     }
 }

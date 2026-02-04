@@ -1,6 +1,6 @@
 package com.example.zoutohanafansite.mapper;
 
-import com.example.zoutohanafansite.entity.admin.project.AdminProjectCard;
+import com.example.zoutohanafansite.entity.admin.project.ProjectCard;
 import com.example.zoutohanafansite.entity.form.ProjectSearchForm;
 import com.example.zoutohanafansite.entity.project.Project;
 import org.apache.ibatis.annotations.Mapper;
@@ -16,8 +16,16 @@ public interface ProjectMapper {
     @Select("SELECT * FROM projects WHERE id = #{id}")
     Project getProjectById(long id);
 
+    @Select("""
+            SELECT * FROM projects
+                WHERE published = true
+                    AND url_key = #{urlKey}
+                    AND deleted = false
+    """)
+    Project getProjectByUrlKey(String urlKey);
+
     // src/main/resources/mapper/ProjectMapper.xmlに移動
-    List<AdminProjectCard> getAllProjects(ProjectSearchForm form);
+    List<ProjectCard> getAllProjects(ProjectSearchForm form);
 
     @Select("""
             SELECT * FROM projects
@@ -39,7 +47,7 @@ public interface ProjectMapper {
                 AND p.deleted = false
             GROUP BY p.id
     """)
-    List<AdminProjectCard> getAllOngoingProjectsAdmin();
+    List<ProjectCard> getAllOngoingProjectsAdmin();
 
     @Select("""
             SELECT * FROM projects
@@ -48,14 +56,6 @@ public interface ProjectMapper {
                     AND deleted = false
     """)
     List<Project> getAllPastProjects();
-
-    @Select("""
-            SELECT * FROM projects
-                WHERE published = true
-                    AND url_key = #{urlKey}
-                    AND deleted = false
-    """)
-    Project getProjectByUrlKey(String urlKey);
 
     @Update("""
         UPDATE projects

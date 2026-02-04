@@ -1,9 +1,8 @@
 package com.example.zoutohanafansite.service;
 
-import com.example.zoutohanafansite.entity.admin.project.AdminProjectCard;
+import com.example.zoutohanafansite.entity.admin.project.ProjectCard;
 import com.example.zoutohanafansite.entity.form.ProjectSearchForm;
 import com.example.zoutohanafansite.entity.project.Project;
-import com.example.zoutohanafansite.mapper.ProjectMapper;
 import com.example.zoutohanafansite.repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +30,16 @@ public class ProjectService {
     }
 
     /**
+     * urlKeyを指定してProjectを取得
+     *
+     * @param urlKey 指定するurlKey
+     * @return Project
+     */
+    public Project getProjectByUrlKey(String urlKey){
+        return projectRepository.getProjectByUrlKey(urlKey);
+    }
+
+    /**
      * Projectを全件取得(管理者用)
      *
      * @oaram form ProjectSearchForm(検索条件)
@@ -39,7 +48,7 @@ public class ProjectService {
      *              List<LocalDateTime> startAt, endAt
      * @return List<AdminProjectCard>
      */
-    public List<AdminProjectCard> getAllProjects(ProjectSearchForm form){
+    public List<ProjectCard> getAllProjects(ProjectSearchForm form){
         return projectRepository.getAllProjects(form);
     }
 
@@ -57,7 +66,7 @@ public class ProjectService {
      *
      * @return List<AdminProjectCard>
      */
-    public List<AdminProjectCard> getAllOngoingProjectsAdmin(){
+    public List<ProjectCard> getAllOngoingProjectsAdmin(){
         return projectRepository.getAllOngoingProjectsAdmin();
     }
 
@@ -93,16 +102,6 @@ public class ProjectService {
                 return null;
         }
         return (int) ChronoUnit.DAYS.between(now.toLocalDate(), targetDate.toLocalDate());
-    }
-
-    /**
-     * urlKeyを指定してProjectを取得
-     *
-     * @param urlKey 指定するurlKey
-     * @return Project
-     */
-    public Project getProjectByUrlKey(String urlKey){
-        return projectRepository.getProjectByUrlKey(urlKey);
     }
 
     /**

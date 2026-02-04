@@ -1,14 +1,11 @@
 package com.example.zoutohanafansite.controller;
 
-import com.example.zoutohanafansite.entity.admin.project.AdminProjectCard;
 import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.service.ProjectService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/project")

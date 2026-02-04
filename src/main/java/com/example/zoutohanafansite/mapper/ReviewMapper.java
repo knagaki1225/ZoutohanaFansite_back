@@ -1,8 +1,9 @@
 package com.example.zoutohanafansite.mapper;
 
+import com.example.zoutohanafansite.entity.admin.review.NominatedReviewCard;
 import com.example.zoutohanafansite.entity.form.ReviewForm;
 import com.example.zoutohanafansite.entity.review.Review;
-import com.example.zoutohanafansite.entity.review.ReviewCard;
+import com.example.zoutohanafansite.entity.admin.review.ReviewCard;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -164,4 +165,8 @@ public interface ReviewMapper {
         </script>
     """)
     List<Review> selectReviewByUrlKeyAndIdList(String urlKey, List<Long> idList);
+
+    @Select("SELECT * FROM nominated_reviews WHERE project_id = #{projectId} AND deleted = false")
+    List<NominatedReviewCard> selectNominatedReviewCardByProjectId(long projectId);
+
 }

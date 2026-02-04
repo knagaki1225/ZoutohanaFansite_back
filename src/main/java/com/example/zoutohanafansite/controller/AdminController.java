@@ -1,29 +1,20 @@
 package com.example.zoutohanafansite.controller;
 
-import com.example.zoutohanafansite.entity.admin.project.AdminDashProject;
-import com.example.zoutohanafansite.entity.admin.project.AdminProjectCard;
+import com.example.zoutohanafansite.entity.admin.project.ProjectCard;
+import com.example.zoutohanafansite.entity.admin.review.NominatedReviewCard;
 import com.example.zoutohanafansite.entity.auth.User;
-import com.example.zoutohanafansite.entity.enums.ProjectStatus;
 import com.example.zoutohanafansite.entity.form.ProjectSearchForm;
 import com.example.zoutohanafansite.entity.form.UserSearchForm;
 import com.example.zoutohanafansite.entity.project.Project;
-import com.example.zoutohanafansite.entity.review.Review;
-import com.example.zoutohanafansite.entity.review.ReviewCard;
-import com.example.zoutohanafansite.repository.ReviewRepository;
-import com.example.zoutohanafansite.security.CustomUserDetails;
+import com.example.zoutohanafansite.entity.admin.review.ReviewCard;
 import com.example.zoutohanafansite.service.ProjectService;
 import com.example.zoutohanafansite.service.ReviewService;
 import com.example.zoutohanafansite.service.UserService;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
@@ -47,7 +38,7 @@ public class AdminController {
 //        }
 //        model.addAttribute("projects",adminDashProjects);
 
-        List<AdminProjectCard> projects = projectService.getAllOngoingProjectsAdmin();
+        List<ProjectCard> projects = projectService.getAllOngoingProjectsAdmin();
         model.addAttribute("projects", projects);
 
         return "admin/top";
@@ -89,9 +80,21 @@ public class AdminController {
 
     @GetMapping("/project/list")
     public String projectList(ProjectSearchForm form, Model model) {
-        List<AdminProjectCard> projects = projectService.getAllProjects(form);
+        List<ProjectCard> projects = projectService.getAllProjects(form);
         model.addAttribute("projects", projects);
         model.addAttribute("form", form);
         return "admin/project_list";
+    }
+
+    @GetMapping("/project/view")
+    public String projectView(@RequestParam(value="urlKey", required = false) String urlKey, Model model) {
+        if (urlKey == null || urlKey.isEmpty()) {
+            return "redirect:/admin/project/list";
+        }
+        Project project = projectService.getProjectByUrlKey(urlKey);
+        List<NominatedReviewCard> reviews = reviewService.getNominatedReviewCardByProjectId(project.getId());
+        model.addAttribute("project", project);
+        model.addAttribute("reviews", reviews);
+        return "admin/project_view";
     }
 }
