@@ -56,10 +56,10 @@ public class ReviewRestController {
     @PostMapping("/voted/{urlKey}")
     public ResponseEntity<ReviewApiData> getVotedReview(@PathVariable String urlKey, @RequestBody List<String> idList){
         List<Review> review = reviewService.selectReviewByUrlKeyAndIdList(urlKey, idList);
-        if(review == null){
+        if(review.isEmpty()){
             return ResponseEntity.notFound().build();
         }
-        ReviewApiData reviewApiData = new ReviewApiData(review.getFirst(), "");
+        ReviewApiData reviewApiData = new ReviewApiData(review.getFirst(), "/api/image/book1.png");
         return ResponseEntity.ok(reviewApiData);
     }
 

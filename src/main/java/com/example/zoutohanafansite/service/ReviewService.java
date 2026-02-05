@@ -189,10 +189,6 @@ public class ReviewService {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime oneWeekLater = now.plusWeeks(1);
         boolean isVoteCount = votingEndAt.isAfter(now) && votingEndAt.isBefore(oneWeekLater.plusNanos(1));
-        LocalDateTime votingEndAt = projectService.getVotingEndAt(urlKey);
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime oneWeekLater = now.plusWeeks(1);
-        boolean isVoteCount = votingEndAt.isAfter(now) && votingEndAt.isBefore(oneWeekLater.plusNanos(1));
 
         PaginationView paginationView = paginationService.getPaginationView(page, reviews.size(), 10);
         for(int i = paginationView.getStartNum(); i < paginationView.getEndNum(); i++){
