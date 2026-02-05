@@ -28,7 +28,7 @@ public interface ProjectMapper {
     Project getProjectByUrlKey(String urlKey);
 
     // src/main/resources/mapper/ProjectMapper.xmlに移動
-    List<ProjectCard> getAllProjects(ProjectSearchForm form);
+//    List<ProjectCard> getAllProjects(ProjectSearchForm form);
 
     @Select("""
             SELECT * FROM projects

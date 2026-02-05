@@ -135,7 +135,6 @@ public interface ReviewMapper {
         WHERE p.url_key = #{urlKey}
         AND r.first_stage_passed = true
         ORDER BY r.vote_count DESC
-        ORDER BY r.vote_count DESC
     """)
     List<Review> selectReviewsByUrlKey(String urlKey);
 
