@@ -28,7 +28,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         String projectId = request.getParameter("id");
 
         if( projectId.isEmpty()){
-            response.sendRedirect(":8081/mypage");
+            response.sendRedirect("/mypage");
             return;
         }
 

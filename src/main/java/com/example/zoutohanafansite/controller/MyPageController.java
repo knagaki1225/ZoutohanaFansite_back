@@ -2,11 +2,14 @@ package com.example.zoutohanafansite.controller;
 
 import com.example.zoutohanafansite.entity.auth.User;
 import com.example.zoutohanafansite.entity.enums.ProjectStatus;
+import com.example.zoutohanafansite.entity.notification.Notification;
+import com.example.zoutohanafansite.entity.notification.NotificationList;
 import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.entity.project.ProjectMyPage;
 import com.example.zoutohanafansite.entity.review.Review;
 import com.example.zoutohanafansite.entity.review.ReviewMyPage;
 import com.example.zoutohanafansite.security.CustomUserDetails;
+import com.example.zoutohanafansite.service.NotificationService;
 import com.example.zoutohanafansite.service.ProjectService;
 import com.example.zoutohanafansite.service.ReviewService;
 import com.example.zoutohanafansite.service.UserService;
@@ -26,11 +29,13 @@ public class MyPageController {
     private final UserService userService;
     private final ProjectService projectService;
     private final ReviewService reviewService;
+    private final NotificationService notificationService;
 
-    public MyPageController(UserService userService, ProjectService projectService, ReviewService reviewService) {
+    public MyPageController(UserService userService, ProjectService projectService, ReviewService reviewService, NotificationService notificationService) {
         this.userService = userService;
         this.projectService = projectService;
         this.reviewService = reviewService;
+        this.notificationService = notificationService;
     }
 
     @GetMapping
@@ -77,6 +82,24 @@ public class MyPageController {
         Project project = projectService.getProjectById(review.getProjectId());
         model.addAttribute("project", project);
         return "/books/book-detail";
+    }
+
+    @GetMapping("/notification")
+    public String notification(@AuthenticationPrincipal CustomUserDetails user, Model model){
+        List<NotificationList> notificationLists = notificationService.getNotificationListByUserId(user.getUserId());
+        model.addAttribute("notifications", notificationLists);
+
+        return "/notification/notification-list";
+    }
+
+    @GetMapping("/notification/{id}")
+    public String notificationDetail(@PathVariable long id, @AuthenticationPrincipal CustomUserDetails user, Model model){
+        Notification notification = notificationService.selectNotificationById(id);
+        model.addAttribute("notification", notification);
+
+        notificationService.updateNotificationSeen(id);
+
+        return "/notification/notification-detail";
     }
 
 }
