@@ -31,6 +31,26 @@ public class ProjectService {
     }
 
     /**
+     * urlKeyを指定してProjectを取得
+     *
+     * @param urlKey 指定するurlKey
+     * @return Project
+     */
+    public Project getProjectByUrlKey(String urlKey){
+        return projectRepository.getProjectByUrlKey(urlKey);
+    }
+
+    /**
+     * urlKeyを指定して非公開でもProjectを取得
+     *
+     * @param urlKey 指定するurlKey
+     * @return Project
+     */
+    public Project getAllProjectByUrlKey(String urlKey){
+        return projectRepository.getAllProjectByUrlKey(urlKey);
+    }
+
+    /**
      * Projectを全件取得(管理者用)
      *
      * @oaram form ProjectSearchForm(検索条件)
@@ -125,5 +145,16 @@ public class ProjectService {
      */
     public LocalDateTime getVotingEndAt(String urlKey){
         return projectRepository.selectVotingEndAt(urlKey);
+    }
+
+    /**
+     * 指定したidのProjectの情報を更新
+     *
+     * @param project 上書きするプロジェクトの内容
+     *
+     * @return boolean
+     */
+    public boolean updateProject(Project project){
+        return projectRepository.updateProject(project);
     }
 }

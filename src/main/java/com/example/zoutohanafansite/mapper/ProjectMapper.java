@@ -4,6 +4,7 @@ import com.example.zoutohanafansite.entity.admin.project.AdminProjectCard;
 import com.example.zoutohanafansite.entity.form.ProjectSearchForm;
 import com.example.zoutohanafansite.entity.project.Project;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -17,7 +18,23 @@ public interface ProjectMapper {
     Project getProjectById(long id);
 
     // src/main/resources/mapper/ProjectMapper.xmlに移動
-    List<AdminProjectCard> getAllProjects(ProjectSearchForm form);
+    List<ProjectCard> getAllProjects(ProjectSearchForm form);
+
+    @Select("""
+            SELECT * FROM projects
+                WHERE published = true
+                    AND url_key = #{urlKey}
+                    AND deleted = false
+    """)
+    Project getProjectByUrlKey(String urlKey);
+
+
+    @Select("""
+            SELECT * FROM projects
+                WHERE url_key = #{urlKey}
+                    AND deleted = false
+    """)
+    Project getAllProjectByUrlKey(String urlKey);
 
     @Select("""
             SELECT * FROM projects
@@ -68,4 +85,28 @@ public interface ProjectMapper {
         SELECT voting_end_at from projects WHERE url_key = #{urlKey} AND deleted = false
     """)
     LocalDateTime selectVotingEndAt(String urlKey);
+
+    @Update("""
+        UPDATE projects
+        SET
+            published = #{project.published},
+            status = #{project.status},
+            name = #{project.name},
+            url_key = #{project.urlKey},
+            introduction = #{project.introduction},
+            project_start_at = #{project.projectStartAt},
+            project_end_at = #{project.projectEndAt},
+            submission_start_at = #{project.submissionStartAt},
+            submission_end_at = #{project.submissionEndAt},
+            voting_start_at = #{project.votingStartAt},
+            voting_end_at = #{project.votingEndAt},
+            enable_visible_book_title = #{project.enableVisibleBookTitle},
+            enable_visible_review_title = #{project.enableVisibleReviewTitle},
+            enable_visible_user_info = #{project.enableVisibleUserInfo},
+            theme_color = #{project.themeColor},
+            main_img_url = #{project.mainImgUrl},
+            updated_at = NOW()
+        WHERE id = #{project.id}
+    """)
+    boolean updateProject(@Param("project") Project project);
 }

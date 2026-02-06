@@ -1,16 +1,13 @@
 package com.example.zoutohanafansite.controller;
 
-import com.example.zoutohanafansite.entity.admin.project.AdminDashProject;
-import com.example.zoutohanafansite.entity.admin.project.AdminProjectCard;
+import com.example.zoutohanafansite.entity.admin.project.ProjectCard;
 import com.example.zoutohanafansite.entity.auth.User;
-import com.example.zoutohanafansite.entity.enums.ProjectStatus;
 import com.example.zoutohanafansite.entity.form.ProjectSearchForm;
 import com.example.zoutohanafansite.entity.form.UserSearchForm;
+import com.example.zoutohanafansite.entity.nominatedreview.NominatedReview;
 import com.example.zoutohanafansite.entity.project.Project;
-import com.example.zoutohanafansite.entity.review.Review;
-import com.example.zoutohanafansite.entity.review.ReviewCard;
-import com.example.zoutohanafansite.repository.ReviewRepository;
-import com.example.zoutohanafansite.security.CustomUserDetails;
+import com.example.zoutohanafansite.entity.admin.review.ReviewCard;
+import com.example.zoutohanafansite.service.NominatedReviewService;
 import com.example.zoutohanafansite.service.ProjectService;
 import com.example.zoutohanafansite.service.ReviewService;
 import com.example.zoutohanafansite.service.UserService;
@@ -19,11 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
@@ -31,11 +24,13 @@ public class AdminController {
     private final ProjectService projectService;
     private final UserService userService;
     private final ReviewService reviewService;
+    private final NominatedReviewService nominatedReviewService;
 
-    public AdminController(ProjectService projectService, UserService userService, ReviewService reviewService) {
+    public AdminController(ProjectService projectService, UserService userService, ReviewService reviewService, NominatedReviewService nominatedReviewService) {
         this.projectService = projectService;
         this.userService = userService;
         this.reviewService = reviewService;
+        this.nominatedReviewService = nominatedReviewService;
     }
 
     @GetMapping("/dash")
@@ -93,5 +88,23 @@ public class AdminController {
         model.addAttribute("projects", projects);
         model.addAttribute("form", form);
         return "admin/project_list";
+    }
+
+    @GetMapping("/project/view")
+    public String projectView(@RequestParam(value="urlKey", required = false) String urlKey, Model model) {
+        if (urlKey == null || urlKey.isEmpty()) {
+            return "redirect:/admin/project/list";
+        }
+        Project project = projectService.getAllProjectByUrlKey(urlKey);
+        List<NominatedReview> reviews = nominatedReviewService.getByProjectId(project.getId());
+        model.addAttribute("project", project);
+        model.addAttribute("reviews", reviews);
+        return "admin/project_edit";
+    }
+
+    @PostMapping("/project/view")
+    public String projectUpdate(Project project) {
+        projectService.updateProject(project);
+        return "redirect:/admin/project/view?urlKey=" + project.getUrlKey();
     }
 }

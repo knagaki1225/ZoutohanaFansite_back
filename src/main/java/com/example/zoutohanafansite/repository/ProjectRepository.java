@@ -21,7 +21,15 @@ public class ProjectRepository {
         return projectMapper.getProjectById(id);
     }
 
-    public List<AdminProjectCard> getAllProjects(ProjectSearchForm form){
+    public Project getProjectByUrlKey(String urlKey){
+        return projectMapper.getProjectByUrlKey(urlKey);
+    }
+
+    public Project getAllProjectByUrlKey(String urlKey){
+        return projectMapper.getAllProjectByUrlKey(urlKey);
+    }
+
+    public List<ProjectCard> getAllProjects(ProjectSearchForm form){
         return projectMapper.getAllProjects(form);
     }
 
@@ -47,5 +55,9 @@ public class ProjectRepository {
 
     public LocalDateTime selectVotingEndAt(String urlKey){
         return projectMapper.selectVotingEndAt(urlKey);
+    }
+
+    public boolean updateProject(Project project) {
+        return projectMapper.updateProject(project);
     }
 }
