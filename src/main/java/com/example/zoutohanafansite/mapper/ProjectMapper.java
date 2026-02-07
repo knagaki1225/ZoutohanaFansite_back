@@ -17,7 +17,7 @@ public interface ProjectMapper {
     @Select("SELECT * FROM projects WHERE id = #{id}")
     Project getProjectById(long id);
 
-    // src/main/resources/mapper/ProjectMapper.xmlに移動
+    // src/main/resources/mapper/ProjectMapper.xml
     List<ProjectCard> getAllProjects(ProjectSearchForm form);
 
     @Select("""
@@ -36,7 +36,7 @@ public interface ProjectMapper {
     """)
     Project getAllProjectByUrlKey(String urlKey);
             
-// src/main/resources/mapper/ProjectMapper.xmlに移動
+// src/main/resources/mapper/ProjectMapper.xml
 //    List<ProjectCard> getAllProjects(ProjectSearchForm form);
 
     @Select("""

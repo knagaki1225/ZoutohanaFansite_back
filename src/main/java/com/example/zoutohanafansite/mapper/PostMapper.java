@@ -1,5 +1,6 @@
 package com.example.zoutohanafansite.mapper;
 
+import com.example.zoutohanafansite.entity.form.PostSearchForm;
 import com.example.zoutohanafansite.entity.post.Post;
 import com.example.zoutohanafansite.entity.post.PostTop;
 import org.apache.ibatis.annotations.Mapper;
@@ -18,6 +19,9 @@ public interface PostMapper {
             ORDER BY posted_at DESC;
     """)
     List<Post> selectPublicPosts();
+
+    // src/main/resources/mapper/PostMapper.xml
+    List<Post> getAllPosts(PostSearchForm form);
 
     @Select("""
             SELECT * FROM posts

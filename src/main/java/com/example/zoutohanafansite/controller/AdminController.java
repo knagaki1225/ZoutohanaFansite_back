@@ -4,11 +4,9 @@ import com.example.zoutohanafansite.entity.admin.project.ProjectCard;
 import com.example.zoutohanafansite.entity.admin.review.NominatedReviewCard;
 import com.example.zoutohanafansite.entity.auth.User;
 import com.example.zoutohanafansite.entity.enums.ProjectStatus;
-import com.example.zoutohanafansite.entity.form.AdminNotificationSendForm;
-import com.example.zoutohanafansite.entity.form.AdminNotificationTemplateForm;
-import com.example.zoutohanafansite.entity.form.ProjectSearchForm;
-import com.example.zoutohanafansite.entity.form.UserSearchForm;
+import com.example.zoutohanafansite.entity.form.*;
 import com.example.zoutohanafansite.entity.notificationtemplate.NotificationTemplate;
+import com.example.zoutohanafansite.entity.post.Post;
 import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.entity.admin.review.ReviewCard;
 import com.example.zoutohanafansite.entity.review.Review;
@@ -30,13 +28,15 @@ public class AdminController {
     private final ReviewService reviewService;
     private final NotificationTemplateService notificationTemplateService;
     private final NotificationService notificationService;
+    private final PostService postService;
 
-    public AdminController(ProjectService projectService, UserService userService, ReviewService reviewService, NotificationTemplateService notificationTemplateService, NotificationService notificationService) {
+    public AdminController(ProjectService projectService, UserService userService, ReviewService reviewService, NotificationTemplateService notificationTemplateService, NotificationService notificationService, PostService postService) {
         this.projectService = projectService;
         this.userService = userService;
         this.reviewService = reviewService;
         this.notificationTemplateService = notificationTemplateService;
         this.notificationService = notificationService;
+        this.postService = postService;
     }
 
     @GetMapping("/dash")
@@ -124,14 +124,14 @@ public class AdminController {
         }
 
         model.addAttribute("notificationTemplates", notificationTemplates);
-        return "/admin/notification_template_list";
+        return "admin/notification_template_list";
     }
 
     @GetMapping("/notification/template/create")
     public String notificationTemplateCreate(Model model){
         AdminNotificationTemplateForm adminNotificationTemplateForm = new AdminNotificationTemplateForm();
         model.addAttribute("adminNotificationTemplateForm", adminNotificationTemplateForm);
-        return "/admin/notification_template_create";
+        return "admin/notification_template_create";
     }
 
     @PostMapping("/notification/template/create")
@@ -144,7 +144,7 @@ public class AdminController {
 
     @GetMapping("/notification/template/create/confirm")
     public String notificationTemplateCreateConfirm(){
-        return "/admin/notification_template_create_confirm";
+        return "admin/notification_template_create_confirm";
     }
 
     @PostMapping("/notification/template/create/confirm")
@@ -179,7 +179,7 @@ public class AdminController {
     @GetMapping("/notification/template/edit/confirm/{id}")
     public String notificationTemplateEditConfirm(@PathVariable long id, Model model){
         model.addAttribute("id", id);
-        return "/admin/notification_template_edit_confirm";
+        return "admin/notification_template_edit_confirm";
     }
 
     @PostMapping("/notification/template/edit/confirm/{id}")
@@ -202,7 +202,7 @@ public class AdminController {
         AdminNotificationSendForm adminNotificationSendForm = new AdminNotificationSendForm();
         model.addAttribute("form", adminNotificationSendForm);
 
-        return "/admin/notification";
+        return "admin/notification";
     }
 
     @PostMapping("/notification/send/{id}")
@@ -211,5 +211,13 @@ public class AdminController {
         notificationService.insertNotificationByForm(form, id, user.getUserId());
 
         return "redirect:/admin/notification/template";
+    }
+
+    @GetMapping("/post/list")
+    public String postList(PostSearchForm form, Model model) {
+        List<Post> posts = postService.getAllPosts(form);
+        model.addAttribute("posts", posts);
+        model.addAttribute("form", form);
+        return "admin/post_list";
     }
 }

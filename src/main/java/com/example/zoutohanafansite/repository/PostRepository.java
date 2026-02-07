@@ -1,5 +1,6 @@
 package com.example.zoutohanafansite.repository;
 
+import com.example.zoutohanafansite.entity.form.PostSearchForm;
 import com.example.zoutohanafansite.entity.post.Post;
 import com.example.zoutohanafansite.entity.post.PostTop;
 import com.example.zoutohanafansite.mapper.PostMapper;
@@ -31,4 +32,7 @@ public class PostRepository {
         return postMapper.selectPostsByKeyword(keyword);
     }
 
+    public List<Post> selectAllPosts(PostSearchForm form) {
+        return postMapper.getAllPosts(form);
+    }
 }
