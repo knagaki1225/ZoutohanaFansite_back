@@ -7,7 +7,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class AdminProjectCard {
+public class ProjectCard {
     private long id;
     private String name;
     private String urlKey;

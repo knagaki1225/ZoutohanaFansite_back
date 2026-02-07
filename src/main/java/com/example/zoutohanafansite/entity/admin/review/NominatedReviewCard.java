@@ -1,4 +1,4 @@
-package com.example.zoutohanafansite.entity.review;
+package com.example.zoutohanafansite.entity.admin.review;
 
 import com.example.zoutohanafansite.entity.enums.UserGender;
 import lombok.Data;
@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class Review {
+public class NominatedReviewCard {
     private long id;
     private Long projectId;
     private Long userId;
@@ -15,17 +15,17 @@ public class Review {
     private int userAgeGroup;
     private UserGender userGender;  // enums/UserGender
     private String userSelfIntroduction;
-    private int userIcon;
+    private long reviewId;
+    private String reviewTitle;
+    private String reviewContent;
+    private String reviewContentEdited;
+    private long reviewVoteCount;
+    private boolean reviewAwarded;
     private Long bookIsbn;
     private String bookTitle;
     private String bookPublisher;
     private String bookAuthor;
-    private String reviewTitle;
-    private String reviewContent;
-    private String reviewContentEdited;
-    private int voteCount;
-    private boolean draft;
-    private boolean firstStagePassed;
+    private String adminComments;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Boolean deleted;

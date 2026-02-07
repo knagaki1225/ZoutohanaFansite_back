@@ -1,6 +1,6 @@
 package com.example.zoutohanafansite.repository;
 
-import com.example.zoutohanafansite.entity.admin.project.AdminProjectCard;
+import com.example.zoutohanafansite.entity.admin.project.ProjectCard;
 import com.example.zoutohanafansite.entity.form.ProjectSearchForm;
 import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.mapper.ProjectMapper;
@@ -37,16 +37,12 @@ public class ProjectRepository {
         return projectMapper.getAllOngoingProjects();
     }
 
-    public List<AdminProjectCard> getAllOngoingProjectsAdmin(){
+    public List<ProjectCard> getAllOngoingProjectsAdmin(){
         return projectMapper.getAllOngoingProjectsAdmin();
     }
 
     public List<Project> getAllPastProjects(){
         return projectMapper.getAllPastProjects();
-    }
-
-    public Project getProjectByUrlKey(String urlKey){
-        return projectMapper.getProjectByUrlKey(urlKey);
     }
 
     public boolean deleteProjectById(long id) {
