@@ -20,11 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
@@ -110,6 +106,12 @@ public class AdminController {
         model.addAttribute("project", project);
         model.addAttribute("reviews", reviews);
         return "admin/project_view";
+    }
+  
+    @PostMapping("/project/view")
+    public String projectUpdate(Project project) {
+        projectService.updateProject(project);
+        return "redirect:/admin/project/view?urlKey=" + project.getUrlKey();
     }
 
     @GetMapping("/notification/template")
