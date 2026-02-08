@@ -1,7 +1,9 @@
 package com.example.zoutohanafansite.repository;
 
 import com.example.zoutohanafansite.entity.admin.review.NominatedReviewCard;
+import com.example.zoutohanafansite.entity.admin.review.ReviewList;
 import com.example.zoutohanafansite.entity.form.ReviewForm;
+import com.example.zoutohanafansite.entity.form.ReviewSearchForm;
 import com.example.zoutohanafansite.entity.review.Review;
 import com.example.zoutohanafansite.entity.admin.review.ReviewCard;
 import com.example.zoutohanafansite.mapper.ReviewMapper;
@@ -75,5 +77,9 @@ public class ReviewRepository {
 
     public List<NominatedReviewCard> selectNominatedReviewCardByProjectId(long projectId) {
         return reviewMapper.selectNominatedReviewCardByProjectId(projectId);
+    }
+
+    public List<ReviewList> getReviewsByUrlKey(ReviewSearchForm form, String urlKey) {
+        return reviewMapper.getReviewsByUrlKey(form, urlKey);
     }
 }

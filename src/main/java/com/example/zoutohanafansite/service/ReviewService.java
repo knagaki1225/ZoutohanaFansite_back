@@ -1,7 +1,9 @@
 package com.example.zoutohanafansite.service;
 
 import com.example.zoutohanafansite.entity.admin.review.NominatedReviewCard;
+import com.example.zoutohanafansite.entity.admin.review.ReviewList;
 import com.example.zoutohanafansite.entity.form.ReviewForm;
+import com.example.zoutohanafansite.entity.form.ReviewSearchForm;
 import com.example.zoutohanafansite.entity.pagination.PaginationView;
 import com.example.zoutohanafansite.entity.review.Review;
 import com.example.zoutohanafansite.entity.review.ReviewApiData;
@@ -246,5 +248,19 @@ public class ReviewService {
      */
     public List<NominatedReviewCard> getNominatedReviewCardByProjectId(long projectId) {
         return reviewRepository.selectNominatedReviewCardByProjectId(projectId);
+    }
+
+    /**
+     * projectIdを指定してreviewを全件取得(管理者用)
+     *
+     * @oaram form ReviewSearchForm(検索条件)
+     *              String sort, keyword
+     *              List<String> status, published
+     *              List<LocalDateTime> startAt, endAt
+     *        projectId
+     * @return List<ProjectCard>
+     */
+    public List<ReviewList> getReviewsByUrlKey(ReviewSearchForm form, String urlKey) {
+        return reviewRepository.getReviewsByUrlKey(form, urlKey);
     }
 }

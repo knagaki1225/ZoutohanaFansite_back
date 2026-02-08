@@ -2,6 +2,7 @@ package com.example.zoutohanafansite.controller;
 
 import com.example.zoutohanafansite.entity.admin.project.ProjectCard;
 import com.example.zoutohanafansite.entity.admin.review.NominatedReviewCard;
+import com.example.zoutohanafansite.entity.admin.review.ReviewList;
 import com.example.zoutohanafansite.entity.auth.User;
 import com.example.zoutohanafansite.entity.enums.ProjectStatus;
 import com.example.zoutohanafansite.entity.form.*;
@@ -51,7 +52,7 @@ public class AdminController {
         List<ProjectCard> projects = projectService.getAllOngoingProjectsAdmin();
         model.addAttribute("projects", projects);
 
-        return "admin/top";
+        return "/admin/top";
     }
 
     @GetMapping("/account/list")
@@ -59,7 +60,7 @@ public class AdminController {
         List<User> users = userService.getAllUsers(form);
         model.addAttribute("users", users);
         model.addAttribute("form", form);
-        return "admin/account_list";
+        return "/admin/account_list";
     }
 
     @GetMapping("/account/view")
@@ -71,7 +72,7 @@ public class AdminController {
         List<ReviewCard> reviews = reviewService.getReviewCardsByUserId(user.getId());
         model.addAttribute("user", user);
         model.addAttribute("reviews", reviews);
-        return "admin/account_view";
+        return "/admin/account_view";
     }
 
     @PostMapping("/account/view")
@@ -85,7 +86,7 @@ public class AdminController {
     public String reviewView(@RequestParam long id, Model model) {
         ReviewCard reviewCard = reviewService.getReviewCardById(id);
         model.addAttribute("review", reviewCard);
-        return "admin/review_edit";
+        return "/admin/review_edit";
     }
 
     @GetMapping("/project/list")
@@ -93,7 +94,7 @@ public class AdminController {
         List<ProjectCard> projects = projectService.getAllProjects(form);
         model.addAttribute("projects", projects);
         model.addAttribute("form", form);
-        return "admin/project_list";
+        return "/admin/project_list";
     }
 
     @GetMapping("/project/view")
@@ -105,13 +106,23 @@ public class AdminController {
         List<NominatedReviewCard> reviews = reviewService.getNominatedReviewCardByProjectId(project.getId());
         model.addAttribute("project", project);
         model.addAttribute("reviews", reviews);
-        return "admin/project_view";
+        return "/admin/project_edit";
     }
-  
+
     @PostMapping("/project/view")
     public String projectUpdate(Project project) {
         projectService.updateProject(project);
         return "redirect:/admin/project/view?urlKey=" + project.getUrlKey();
+    }
+
+    @GetMapping("/review/list")
+    public String reviewList(ReviewSearchForm form, String urlKey, Model model) {
+        Project project = projectService.getProjectByUrlKey(urlKey);
+        List<ReviewList> reviews = reviewService.getReviewsByUrlKey(form, urlKey);
+        model.addAttribute("project", project);
+        model.addAttribute("reviews", reviews);
+        model.addAttribute("form", form);
+        return "admin/review_list";
     }
 
     @GetMapping("/notification/template")
@@ -124,14 +135,14 @@ public class AdminController {
         }
 
         model.addAttribute("notificationTemplates", notificationTemplates);
-        return "admin/notification_template_list";
+        return "/admin/notification_template_list";
     }
 
     @GetMapping("/notification/template/create")
     public String notificationTemplateCreate(Model model){
         AdminNotificationTemplateForm adminNotificationTemplateForm = new AdminNotificationTemplateForm();
         model.addAttribute("adminNotificationTemplateForm", adminNotificationTemplateForm);
-        return "admin/notification_template_create";
+        return "/admin/notification_template_create";
     }
 
     @PostMapping("/notification/template/create")
@@ -144,7 +155,7 @@ public class AdminController {
 
     @GetMapping("/notification/template/create/confirm")
     public String notificationTemplateCreateConfirm(){
-        return "admin/notification_template_create_confirm";
+        return "/admin/notification_template_create_confirm";
     }
 
     @PostMapping("/notification/template/create/confirm")
@@ -166,7 +177,7 @@ public class AdminController {
         form.setContent(notificationTemplate.getContent());
         model.addAttribute("form", form);
         model.addAttribute("templateId", id);
-        return "admin/notification_template_edit";
+        return "/admin/notification_template_edit";
     }
 
     @PostMapping("/notification/template/edit/{id}")
@@ -179,7 +190,7 @@ public class AdminController {
     @GetMapping("/notification/template/edit/confirm/{id}")
     public String notificationTemplateEditConfirm(@PathVariable long id, Model model){
         model.addAttribute("id", id);
-        return "admin/notification_template_edit_confirm";
+        return "/admin/notification_template_edit_confirm";
     }
 
     @PostMapping("/notification/template/edit/confirm/{id}")
@@ -202,7 +213,7 @@ public class AdminController {
         AdminNotificationSendForm adminNotificationSendForm = new AdminNotificationSendForm();
         model.addAttribute("form", adminNotificationSendForm);
 
-        return "admin/notification";
+        return "/admin/notification";
     }
 
     @PostMapping("/notification/send/{id}")
@@ -218,6 +229,6 @@ public class AdminController {
         List<Post> posts = postService.getAllPosts(form);
         model.addAttribute("posts", posts);
         model.addAttribute("form", form);
-        return "admin/post_list";
+        return "/admin/post_list";
     }
 }
