@@ -2,13 +2,12 @@ package com.example.zoutohanafansite.controller;
 
 import com.example.zoutohanafansite.entity.admin.project.ProjectCard;
 import com.example.zoutohanafansite.entity.admin.review.NominatedReviewCard;
+import com.example.zoutohanafansite.entity.admin.review.ReviewList;
 import com.example.zoutohanafansite.entity.auth.User;
 import com.example.zoutohanafansite.entity.enums.ProjectStatus;
-import com.example.zoutohanafansite.entity.form.AdminNotificationSendForm;
-import com.example.zoutohanafansite.entity.form.AdminNotificationTemplateForm;
-import com.example.zoutohanafansite.entity.form.ProjectSearchForm;
-import com.example.zoutohanafansite.entity.form.UserSearchForm;
+import com.example.zoutohanafansite.entity.form.*;
 import com.example.zoutohanafansite.entity.notificationtemplate.NotificationTemplate;
+import com.example.zoutohanafansite.entity.post.Post;
 import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.entity.admin.review.ReviewCard;
 import com.example.zoutohanafansite.entity.review.Review;
@@ -30,13 +29,15 @@ public class AdminController {
     private final ReviewService reviewService;
     private final NotificationTemplateService notificationTemplateService;
     private final NotificationService notificationService;
+    private final PostService postService;
 
-    public AdminController(ProjectService projectService, UserService userService, ReviewService reviewService, NotificationTemplateService notificationTemplateService, NotificationService notificationService) {
+    public AdminController(ProjectService projectService, UserService userService, ReviewService reviewService, NotificationTemplateService notificationTemplateService, NotificationService notificationService, PostService postService) {
         this.projectService = projectService;
         this.userService = userService;
         this.reviewService = reviewService;
         this.notificationTemplateService = notificationTemplateService;
         this.notificationService = notificationService;
+        this.postService = postService;
     }
 
     @GetMapping("/dash")
@@ -51,7 +52,7 @@ public class AdminController {
         List<ProjectCard> projects = projectService.getAllOngoingProjectsAdmin();
         model.addAttribute("projects", projects);
 
-        return "admin/top";
+        return "/admin/top";
     }
 
     @GetMapping("/account/list")
@@ -59,7 +60,7 @@ public class AdminController {
         List<User> users = userService.getAllUsers(form);
         model.addAttribute("users", users);
         model.addAttribute("form", form);
-        return "admin/account_list";
+        return "/admin/account_list";
     }
 
     @GetMapping("/account/view")
@@ -71,7 +72,7 @@ public class AdminController {
         List<ReviewCard> reviews = reviewService.getReviewCardsByUserId(user.getId());
         model.addAttribute("user", user);
         model.addAttribute("reviews", reviews);
-        return "admin/account_view";
+        return "/admin/account_view";
     }
 
     @PostMapping("/account/view")
@@ -85,7 +86,7 @@ public class AdminController {
     public String reviewView(@RequestParam long id, Model model) {
         ReviewCard reviewCard = reviewService.getReviewCardById(id);
         model.addAttribute("review", reviewCard);
-        return "admin/review_edit";
+        return "/admin/review_edit";
     }
 
     @GetMapping("/project/list")
@@ -93,7 +94,7 @@ public class AdminController {
         List<ProjectCard> projects = projectService.getAllProjects(form);
         model.addAttribute("projects", projects);
         model.addAttribute("form", form);
-        return "admin/project_list";
+        return "/admin/project_list";
     }
 
     @GetMapping("/project/view")
@@ -105,13 +106,33 @@ public class AdminController {
         List<NominatedReviewCard> reviews = reviewService.getNominatedReviewCardByProjectId(project.getId());
         model.addAttribute("project", project);
         model.addAttribute("reviews", reviews);
-        return "admin/project_view";
+        return "/admin/project_edit";
     }
-  
+
     @PostMapping("/project/view")
     public String projectUpdate(Project project) {
         projectService.updateProject(project);
         return "redirect:/admin/project/view?urlKey=" + project.getUrlKey();
+    }
+
+    @GetMapping("/review/list")
+    public String reviewList(@RequestParam String urlKey, ReviewSearchForm form, Model model) {
+        Project project = projectService.getProjectByUrlKey(urlKey);
+        List<ReviewList> reviews = reviewService.getReviewsByUrlKey(form, urlKey);
+        model.addAttribute("project", project);
+        model.addAttribute("reviews", reviews);
+        model.addAttribute("form", form);
+        return "admin/review_list";
+    }
+
+    @PostMapping("/review/bulk-update")
+    public String bulkUpdate(
+            @RequestParam String urlKey,
+            @RequestParam List<Long> reviewIds,
+            @RequestParam String targetStatus) {
+
+        reviewService.bulkChangeStatus(reviewIds, targetStatus);
+        return "redirect:/admin/review/list?urlKey=" + urlKey;
     }
 
     @GetMapping("/notification/template")
@@ -166,7 +187,7 @@ public class AdminController {
         form.setContent(notificationTemplate.getContent());
         model.addAttribute("form", form);
         model.addAttribute("templateId", id);
-        return "admin/notification_template_edit";
+        return "/admin/notification_template_edit";
     }
 
     @PostMapping("/notification/template/edit/{id}")
@@ -211,5 +232,13 @@ public class AdminController {
         notificationService.insertNotificationByForm(form, id, user.getUserId());
 
         return "redirect:/admin/notification/template";
+    }
+
+    @GetMapping("/post/list")
+    public String postList(PostSearchForm form, Model model) {
+        List<Post> posts = postService.getAllPosts(form);
+        model.addAttribute("posts", posts);
+        model.addAttribute("form", form);
+        return "/admin/post_list";
     }
 }

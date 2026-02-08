@@ -1,6 +1,7 @@
 package com.example.zoutohanafansite.service;
 
 import com.example.zoutohanafansite.entity.enums.PostCategory;
+import com.example.zoutohanafansite.entity.form.PostSearchForm;
 import com.example.zoutohanafansite.entity.pagination.PaginationInfo;
 import com.example.zoutohanafansite.entity.pagination.PaginationView;
 import com.example.zoutohanafansite.entity.post.Post;
@@ -108,6 +109,16 @@ public class PostService {
 
         return new PostPagination(paginationInfo, result);
     }
+
+    /**
+     * 管理者用お知らせ全件取得
+     *
+     * @return List<Post>
+     */
+    public List<Post> getAllPosts(PostSearchForm form){
+        return postRepository.selectAllPosts(form);
+    }
+
 
     /**
      * ID指定でのお知らせ取得
