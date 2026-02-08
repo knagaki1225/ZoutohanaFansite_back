@@ -9,8 +9,11 @@ import com.example.zoutohanafansite.entity.review.Review;
 import com.example.zoutohanafansite.entity.review.ReviewApiData;
 import com.example.zoutohanafansite.entity.admin.review.ReviewCard;
 import com.example.zoutohanafansite.entity.review.ReviewPagination;
+import com.example.zoutohanafansite.mapper.ReviewMapper;
+import com.example.zoutohanafansite.repository.NominatedReviewRepository;
 import com.example.zoutohanafansite.repository.ReviewRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.LocalDateTime;
@@ -21,11 +24,13 @@ import java.util.List;
 @Service
 public class ReviewService {
     private final ReviewRepository reviewRepository;
+    private final NominatedReviewRepository nominatedReviewRepository;
     private final PaginationService paginationService;
     private final ProjectService projectService;
 
-    public ReviewService(ReviewRepository reviewRepository, PaginationService paginationService, ProjectService projectService) {
+    public ReviewService(ReviewRepository reviewRepository, NominatedReviewRepository nominatedReviewRepository, PaginationService paginationService, ProjectService projectService) {
         this.reviewRepository = reviewRepository;
+        this.nominatedReviewRepository = nominatedReviewRepository;
         this.paginationService = paginationService;
         this.projectService = projectService;
     }
@@ -263,4 +268,40 @@ public class ReviewService {
     public List<ReviewList> getReviewsByUrlKey(ReviewSearchForm form, String urlKey) {
         return reviewRepository.getReviewsByUrlKey(form, urlKey);
     }
+
+    /**
+     * 書評一覧でチェックした書評の一括操作
+     */
+    @Transactional
+    public void bulkChangeStatus(List<Long> ids, String status) {
+
+        switch (status) {
+
+            case "INITIAL":
+                reviewRepository.updateFirstStagePassed(ids, false);
+                nominatedReviewRepository.deleteByReviewIds(ids);
+                break;
+
+            case "FIRST_STAGE_PASSED":
+                reviewRepository.updateFirstStagePassed(ids, true);
+                nominatedReviewRepository.deleteByReviewIds(ids);
+                break;
+
+            case "SECOND_STAGE_PASSED":
+                reviewRepository.updateFirstStagePassed(ids, true);
+                nominatedReviewRepository.insertIgnore(ids);
+                nominatedReviewRepository.updateAwarded(ids, false);
+                break;
+
+            case "AWARDED":
+                reviewRepository.updateFirstStagePassed(ids, true);
+                nominatedReviewRepository.insertIgnore(ids);
+                nominatedReviewRepository.updateAwarded(ids, true);
+                break;
+
+            default:
+                throw new IllegalArgumentException("Unknown status: " + status);
+        }
+    }
 }
+

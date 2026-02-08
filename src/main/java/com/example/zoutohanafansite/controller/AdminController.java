@@ -116,13 +116,23 @@ public class AdminController {
     }
 
     @GetMapping("/review/list")
-    public String reviewList(ReviewSearchForm form, String urlKey, Model model) {
+    public String reviewList(@RequestParam String urlKey, ReviewSearchForm form, Model model) {
         Project project = projectService.getProjectByUrlKey(urlKey);
         List<ReviewList> reviews = reviewService.getReviewsByUrlKey(form, urlKey);
         model.addAttribute("project", project);
         model.addAttribute("reviews", reviews);
         model.addAttribute("form", form);
         return "admin/review_list";
+    }
+
+    @PostMapping("/review/bulk-update")
+    public String bulkUpdate(
+            @RequestParam String urlKey,
+            @RequestParam List<Long> reviewIds,
+            @RequestParam String targetStatus) {
+
+        reviewService.bulkChangeStatus(reviewIds, targetStatus);
+        return "redirect:/admin/review/list?urlKey=" + urlKey;
     }
 
     @GetMapping("/notification/template")

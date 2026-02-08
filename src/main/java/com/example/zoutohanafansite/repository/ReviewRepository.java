@@ -82,4 +82,8 @@ public class ReviewRepository {
     public List<ReviewList> getReviewsByUrlKey(ReviewSearchForm form, String urlKey) {
         return reviewMapper.getReviewsByUrlKey(form, urlKey);
     }
+
+    public void updateFirstStagePassed(List<Long> ids, boolean passed) {
+        reviewMapper.updateFirstStagePassed(ids, passed);
+    }
 }

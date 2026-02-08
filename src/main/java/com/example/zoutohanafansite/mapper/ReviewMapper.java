@@ -184,4 +184,16 @@ public interface ReviewMapper {
     @Select("SELECT * FROM nominated_reviews WHERE project_id = #{projectId} AND deleted = false")
     List<NominatedReviewCard> selectNominatedReviewCardByProjectId(long projectId);
 
+    @Update("""
+        <script>
+            UPDATE reviews
+            SET first_stage_passed = #{passed}
+            WHERE id IN
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </script>
+    """)
+    void updateFirstStagePassed(@Param("ids") List<Long> ids,
+                                @Param("passed") boolean passed);
 }
