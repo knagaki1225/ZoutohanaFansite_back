@@ -66,13 +66,13 @@ public class AdminController {
     @GetMapping("/account/view")
     public String accountView(@RequestParam(value="loginId", required = false) String loginId, Model model) {
         if (loginId == null || loginId.isEmpty()) {
-            return "redirect:/admin/account/list";
+            return "redirect:admin/account/list";
         }
         User user = userService.getUserByLoginId(loginId);
         List<ReviewCard> reviews = reviewService.getReviewCardsByUserId(user.getId());
         model.addAttribute("user", user);
         model.addAttribute("reviews", reviews);
-        return "/admin/account_view";
+        return "admin/account_view";
     }
 
     @PostMapping("/account/view")
@@ -86,7 +86,7 @@ public class AdminController {
     public String reviewView(@RequestParam long id, Model model) {
         ReviewCard reviewCard = reviewService.getReviewCardById(id);
         model.addAttribute("review", reviewCard);
-        return "/admin/review_edit";
+        return "admin/review_edit";
     }
 
     @GetMapping("/project/list")
@@ -94,7 +94,7 @@ public class AdminController {
         List<ProjectCard> projects = projectService.getAllProjects(form);
         model.addAttribute("projects", projects);
         model.addAttribute("form", form);
-        return "/admin/project_list";
+        return "admin/project_list";
     }
 
     @GetMapping("/project/view")
@@ -106,13 +106,32 @@ public class AdminController {
         List<NominatedReviewCard> reviews = reviewService.getNominatedReviewCardByProjectId(project.getId());
         model.addAttribute("project", project);
         model.addAttribute("reviews", reviews);
-        return "/admin/project_edit";
+        return "admin/project_edit";
     }
 
     @PostMapping("/project/view")
     public String projectUpdate(Project project) {
         projectService.updateProject(project);
         return "redirect:/admin/project/view?urlKey=" + project.getUrlKey();
+    }
+
+    @PostMapping("/project/delete")
+    public String deleteProject(
+            @RequestParam Long projectId,
+            @RequestParam String inputUrlKey,
+            RedirectAttributes ra) {
+
+        Project project = projectService.getProjectById(projectId);
+
+        if (!project.getUrlKey().equals(inputUrlKey)) {
+            ra.addFlashAttribute("errorMessage", "企画URLが一致しません");
+            return "redirect:/admin/project/list";
+        }
+
+        projectService.deleteProjectById(projectId);
+
+        ra.addFlashAttribute("successMessage", "企画を削除しました");
+        return "redirect:/admin/project/list";
     }
 
     @GetMapping("/review/list")
@@ -145,14 +164,14 @@ public class AdminController {
         }
 
         model.addAttribute("notificationTemplates", notificationTemplates);
-        return "/admin/notification_template_list";
+        return "admin/notification_template_list";
     }
 
     @GetMapping("/notification/template/create")
     public String notificationTemplateCreate(Model model){
         AdminNotificationTemplateForm adminNotificationTemplateForm = new AdminNotificationTemplateForm();
         model.addAttribute("adminNotificationTemplateForm", adminNotificationTemplateForm);
-        return "/admin/notification_template_create";
+        return "admin/notification_template_create";
     }
 
     @PostMapping("/notification/template/create")
@@ -165,7 +184,7 @@ public class AdminController {
 
     @GetMapping("/notification/template/create/confirm")
     public String notificationTemplateCreateConfirm(){
-        return "/admin/notification_template_create_confirm";
+        return "admin/notification_template_create_confirm";
     }
 
     @PostMapping("/notification/template/create/confirm")
@@ -187,7 +206,7 @@ public class AdminController {
         form.setContent(notificationTemplate.getContent());
         model.addAttribute("form", form);
         model.addAttribute("templateId", id);
-        return "/admin/notification_template_edit";
+        return "admin/notification_template_edit";
     }
 
     @PostMapping("/notification/template/edit/{id}")
@@ -200,7 +219,7 @@ public class AdminController {
     @GetMapping("/notification/template/edit/confirm/{id}")
     public String notificationTemplateEditConfirm(@PathVariable long id, Model model){
         model.addAttribute("id", id);
-        return "/admin/notification_template_edit_confirm";
+        return "admin/notification_template_edit_confirm";
     }
 
     @PostMapping("/notification/template/edit/confirm/{id}")
@@ -223,7 +242,7 @@ public class AdminController {
         AdminNotificationSendForm adminNotificationSendForm = new AdminNotificationSendForm();
         model.addAttribute("form", adminNotificationSendForm);
 
-        return "/admin/notification";
+        return "admin/notification";
     }
 
     @PostMapping("/notification/send/{id}")
@@ -239,6 +258,28 @@ public class AdminController {
         List<Post> posts = postService.getAllPosts(form);
         model.addAttribute("posts", posts);
         model.addAttribute("form", form);
-        return "/admin/post_list";
+        return "admin/post_list";
+    }
+
+    @GetMapping("/post/view")
+    public String postView(@RequestParam(value="id", required = false) long id, Model model) {
+        if (id < 0) {
+            return "redirect:/admin/post/list";
+        }
+        Post post = postService.getPostById(id);
+        model.addAttribute("post", post);
+        return "admin/post_edit";
+    }
+
+    @PostMapping("/post/view")
+    public String postUpdate(Post post) {
+        postService.updatePost(post);
+        return "redirect:/admin/post/view?id=" + post.getId();
+    }
+
+    @PostMapping("/post/delete")
+    public String deletePost(@RequestParam Long id) {
+        postService.deletePostById(id);
+        return "redirect:/admin/post/list";
     }
 }

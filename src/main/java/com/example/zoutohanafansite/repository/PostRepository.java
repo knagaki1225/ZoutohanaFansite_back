@@ -35,4 +35,16 @@ public class PostRepository {
     public List<Post> selectAllPosts(PostSearchForm form) {
         return postMapper.getAllPosts(form);
     }
+
+    public Post selectPostById(long id){
+        return postMapper.selectPostById(id);
+    }
+
+    public boolean deletePostById(long id){
+        return postMapper.deletePostById(id);
+    }
+
+    public boolean updatePost(Post post) {
+        return postMapper.updatePost(post);
+    }
 }

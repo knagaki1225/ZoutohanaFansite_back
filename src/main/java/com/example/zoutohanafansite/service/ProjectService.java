@@ -52,7 +52,7 @@ public class ProjectService {
     /**
      * Projectを全件取得(管理者用)
      *
-     * @oaram form ProjectSearchForm(検索条件)
+     * @param form ProjectSearchForm(検索条件)
      *              String sort, keyword
      *              List<String> status, published
      *              List<LocalDateTime> startAt, endAt
