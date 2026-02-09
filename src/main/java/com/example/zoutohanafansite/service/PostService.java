@@ -113,10 +113,24 @@ public class PostService {
     /**
      * 管理者用お知らせ全件取得
      *
+     * @param form PostSearchForm(検索条件)
+     *              String sort, keyword
+     *              List<String> status, category
+     *              LocalDateTime createdStartAt, createdEndAt, postedStartAt, postedEndAt
      * @return List<Post>
      */
     public List<Post> getAllPosts(PostSearchForm form){
         return postRepository.selectAllPosts(form);
+    }
+
+    /**
+     * 管理者用ID指定お知らせ取得
+     *
+     * @param id お知らせID
+     * @return Post
+     */
+    public Post getPostById(long id){
+        return postRepository.selectPostById(id);
     }
 
 
@@ -138,5 +152,25 @@ public class PostService {
      */
     public List<PostTop> getPostTopsByKeyword(String keyword){
         return postRepository.selectPostsByKeyword(keyword);
+    }
+
+    /**
+     * お知らせ削除
+     *
+     * @param id お知らせID
+     * @return boolean
+     */
+    public boolean deletePostById(long id){
+        return postRepository.deletePostById(id);
+    }
+
+    /**
+     * お知らせ更新
+     *
+     * @param post 上書きするお知らせの内容
+     * @return boolean
+     */
+    public boolean updatePost(Post post){
+        return postRepository.updatePost(post);
     }
 }
