@@ -42,4 +42,8 @@ public class UserRepository {
     public void deleteUser(long id){
         userMapper.deleteUser(id);
     }
+
+    public void updateUser(User user){
+        userMapper.updateUser(user);
+    }
 }

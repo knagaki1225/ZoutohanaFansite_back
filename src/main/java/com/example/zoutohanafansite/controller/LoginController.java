@@ -35,6 +35,11 @@ public class LoginController {
 
     @PostMapping("/password-reset")
     public String passwordReset(@RequestParam long id, PasswordResetForm passwordResetForm, RedirectAttributes redirectAttributes){
+        if(userService.getUserByLoginId(passwordResetForm.getLoginId()) == null){
+            redirectAttributes.addFlashAttribute("error", true);
+            return "redirect:/password-reset?id="+id;
+        }
+
         if(userService.checkSecurityKey(passwordResetForm)){
             redirectAttributes.addFlashAttribute("alreadyCheck", true);
             User user = userService.getUserByLoginId(passwordResetForm.getLoginId());

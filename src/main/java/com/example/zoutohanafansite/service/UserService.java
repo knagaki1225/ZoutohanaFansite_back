@@ -123,4 +123,14 @@ public class UserService {
     public List<User> getAllUsers(UserSearchForm form) {
         return userRepository.getAllUsers(form);
     }
+
+
+    /**
+     * アカウント編集
+     *
+     * @param user 更新後のUser
+     */
+    public void updateUser(User user){
+        userRepository.updateUser(user);
+    }
 }
