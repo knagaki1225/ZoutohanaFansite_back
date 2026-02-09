@@ -115,6 +115,25 @@ public class AdminController {
         return "redirect:/admin/project/view?urlKey=" + project.getUrlKey();
     }
 
+    @PostMapping("/project/delete")
+    public String deleteProject(
+            @RequestParam Long projectId,
+            @RequestParam String inputUrlKey,
+            RedirectAttributes ra) {
+
+        Project project = projectService.getProjectById(projectId);
+
+        if (!project.getUrlKey().equals(inputUrlKey)) {
+            ra.addFlashAttribute("errorMessage", "企画URLが一致しません");
+            return "redirect:/admin/project/list";
+        }
+
+        projectService.deleteProjectById(projectId);
+
+        ra.addFlashAttribute("successMessage", "企画を削除しました");
+        return "redirect:/admin/project/list";
+    }
+
     @GetMapping("/review/list")
     public String reviewList(@RequestParam String urlKey, ReviewSearchForm form, Model model) {
         Project project = projectService.getProjectByUrlKey(urlKey);
