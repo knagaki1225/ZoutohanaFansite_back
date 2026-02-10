@@ -1,6 +1,7 @@
 package com.example.zoutohanafansite.service;
 
 import com.example.zoutohanafansite.entity.enums.PostCategory;
+import com.example.zoutohanafansite.entity.enums.PostStatus;
 import com.example.zoutohanafansite.entity.form.PostSearchForm;
 import com.example.zoutohanafansite.entity.pagination.PaginationInfo;
 import com.example.zoutohanafansite.entity.pagination.PaginationView;
@@ -8,8 +9,11 @@ import com.example.zoutohanafansite.entity.post.Post;
 import com.example.zoutohanafansite.entity.post.PostPagination;
 import com.example.zoutohanafansite.entity.post.PostTop;
 import com.example.zoutohanafansite.repository.PostRepository;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -172,5 +176,19 @@ public class PostService {
      */
     public boolean updatePost(Post post){
         return postRepository.updatePost(post);
+    }
+
+    /**
+     * お知らせ作成
+     *
+     * @param post 作成するお知らせの内容
+     * @return Post 作成したお知らせ
+     */
+    public Post createPost(Post post) {
+        post.setStatus(PostStatus.valueOf("DRAFT"));
+        post.setPostedAt(LocalDateTime.now());
+        post.setUpdatedAt(LocalDateTime.now());
+        postRepository.createPost(post);
+        return post;
     }
 }

@@ -262,11 +262,14 @@ public class AdminController {
     }
 
     @GetMapping("/post/view")
-    public String postView(@RequestParam(value="id", required = false) long id, Model model) {
-        if (id < 0) {
+    public String postView(@RequestParam(value="id", required = false) Long id, Model model) {
+        if (id == null) {
             return "redirect:/admin/post/list";
         }
         Post post = postService.getPostById(id);
+        if (post == null) {
+            return "redirect:/admin/post/list";
+        }
         model.addAttribute("post", post);
         return "admin/post_edit";
     }
@@ -281,5 +284,17 @@ public class AdminController {
     public String deletePost(@RequestParam Long id) {
         postService.deletePostById(id);
         return "redirect:/admin/post/list";
+    }
+
+    @GetMapping("/post/create")
+    public String createPostForm(){
+        return "admin/post_create";
+    }
+
+    @PostMapping("/post/create")
+    public String createPost(Post post, @AuthenticationPrincipal CustomAdminUserDetails user) {
+        post.setAdminId((int) user.getUserId());
+        Post createdPost = postService.createPost(post);
+        return "redirect:/admin/post/view?id=" + createdPost.getId();
     }
 }
