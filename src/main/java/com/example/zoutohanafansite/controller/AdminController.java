@@ -82,13 +82,6 @@ public class AdminController {
         return "redirect:/admin/account/view?loginId=" + user.getLoginId();
     }
 
-    @GetMapping("/review/edit")
-    public String reviewView(@RequestParam long id, Model model) {
-        ReviewCard reviewCard = reviewService.getReviewCardById(id);
-        model.addAttribute("review", reviewCard);
-        return "admin/review_edit";
-    }
-
     @GetMapping("/project/list")
     public String projectList(ProjectSearchForm form, Model model) {
         List<ProjectCard> projects = projectService.getAllProjects(form);
@@ -144,13 +137,30 @@ public class AdminController {
         return "admin/review_list";
     }
 
-    @PostMapping("/review/bulk-update")
-    public String bulkUpdate(
+    @GetMapping("/review/view")
+    public String reviewView(@RequestParam long id, Model model) {
+        ReviewCard reviewCard = reviewService.getReviewCardById(id);
+        model.addAttribute("review", reviewCard);
+        return "admin/review_edit";
+    }
+
+    // 書評のステータス更新
+    @PostMapping("/review/statusUpdateSingle")
+    public String reviewStatusUpdateSingle(
+            @RequestParam Long reviewId,
+            @RequestParam String targetStatus) {
+
+        reviewService.changeStatusSingle(reviewId, targetStatus);
+        return "redirect:/admin/review/view?id=" + reviewId;
+    }
+    // 書評一覧のステータス一括変更
+    @PostMapping("/review/statusUpdate")
+    public String statusUpdate(
             @RequestParam String urlKey,
             @RequestParam List<Long> reviewIds,
             @RequestParam String targetStatus) {
 
-        reviewService.bulkChangeStatus(reviewIds, targetStatus);
+        reviewService.changeStatus(reviewIds, targetStatus);
         return "redirect:/admin/review/list?urlKey=" + urlKey;
     }
 
