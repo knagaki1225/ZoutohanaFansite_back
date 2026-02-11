@@ -37,6 +37,9 @@ public class ReviewRestController {
 
     @GetMapping("/list/{urlKey}")
     public ResponseEntity<ReviewPagination> getReviewList(@PathVariable String urlKey, @RequestParam(defaultValue = "1") int page){
+        if(page < 1){
+            page = 1;
+        }
         return ResponseEntity.ok(reviewService.getReviewApiData(urlKey, page));
     }
 

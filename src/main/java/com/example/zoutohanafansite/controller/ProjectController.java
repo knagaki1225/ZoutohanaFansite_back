@@ -3,6 +3,7 @@ package com.example.zoutohanafansite.controller;
 import com.example.zoutohanafansite.entity.admin.project.ProjectCard;
 import com.example.zoutohanafansite.entity.nominatedreview.NominatedReviewWork;
 import com.example.zoutohanafansite.entity.project.Project;
+import com.example.zoutohanafansite.exception.ProjectNotFoundException;
 import com.example.zoutohanafansite.service.NominatedReviewService;
 import com.example.zoutohanafansite.service.ProjectService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,10 +27,9 @@ public class ProjectController {
     @GetMapping("/{urlKey}")
     public String project(@PathVariable("urlKey") String urlKey, Model model) {
         Project project = projectService.getProjectByUrlKey(urlKey);
-//        if (project == null) {
-//            // 不正アクセス
-//            return "project/first-ex";
-//        }
+        if (project == null) {
+            throw new ProjectNotFoundException();
+        }
 
         String returnUrl = "project/first-ex";
 
