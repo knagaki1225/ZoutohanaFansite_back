@@ -25,4 +25,16 @@ public class NominatedReviewRepository {
     public List<NominatedReview> selectNotAwardReviewByUrlKey(String urlKey){
         return nominatedReviewMapper.selectNotAwardReviewByUrlKey(urlKey);
     }
+
+    public void insertIgnore(List<Long> ids) {
+        nominatedReviewMapper.insertIgnore(ids);
+    }
+
+    public void updateAwarded(List<Long> ids, boolean awarded) {
+        nominatedReviewMapper.updateAwarded(ids, awarded);
+    }
+
+    public void deleteByReviewIds(List<Long> ids) {
+        nominatedReviewMapper.deleteByReviewIds(ids);
+    }
 }

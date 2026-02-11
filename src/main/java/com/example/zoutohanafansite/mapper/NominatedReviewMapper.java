@@ -1,8 +1,7 @@
 package com.example.zoutohanafansite.mapper;
 
 import com.example.zoutohanafansite.entity.nominatedreview.NominatedReview;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -32,4 +31,83 @@ public interface NominatedReviewMapper {
           AND nr.deleted = false;
     """)
     List<NominatedReview> selectNotAwardReviewByUrlKey(String urlKey);
+
+    @Update("""
+        <script>
+            UPDATE nominated_reviews
+            SET review_awarded = #{awarded}
+            WHERE review_id IN
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+              #{id}
+            </foreach>
+        </script>
+    """)
+    void updateAwarded(@Param("ids") List<Long> ids,
+                       @Param("awarded") boolean awarded);
+
+    @Insert("""
+    <script>
+        INSERT INTO nominated_reviews (
+            project_id,
+            user_id,
+            user_nickname,
+            user_address,
+            user_age_group,
+            user_gender,
+            user_self_introduction,
+            review_id,
+            review_title,
+            review_content,
+            review_content_edited,
+            review_vote_count,
+            book_isbn,
+            book_title,
+            book_publisher,
+            book_author,
+            created_at,
+            updated_at,
+            deleted,
+            user_icon
+        )
+        SELECT
+            project_id,
+            user_id,
+            user_nickname,
+            user_address,
+            user_age_group,
+            user_gender,
+            user_self_introduction,
+            id,
+            review_title,
+            review_content,
+            review_content_edited,
+            vote_count,
+            book_isbn,
+            book_title,
+            book_publisher,
+            book_author,
+            created_at,
+            updated_at,
+            deleted,
+            user_icon
+        FROM reviews
+        WHERE id IN
+        <foreach collection="reviewIds" item="rid" open="(" separator="," close=")">
+            #{rid}
+        </foreach>
+        ON CONFLICT (review_id) DO NOTHING
+    </script>
+    """)
+    void insertIgnore(@Param("reviewIds") List<Long> reviewIds);
+
+    @Delete("""
+        <script>
+        DELETE FROM nominated_reviews
+        WHERE review_id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+          #{id}
+        </foreach>
+        </script>
+    """)
+    void deleteByReviewIds(@Param("ids") List<Long> ids);
 }

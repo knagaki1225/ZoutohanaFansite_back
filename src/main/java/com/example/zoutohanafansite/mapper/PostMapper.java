@@ -1,9 +1,13 @@
 package com.example.zoutohanafansite.mapper;
 
+import com.example.zoutohanafansite.entity.form.PostSearchForm;
 import com.example.zoutohanafansite.entity.post.Post;
 import com.example.zoutohanafansite.entity.post.PostTop;
+import com.example.zoutohanafansite.entity.project.Project;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -18,6 +22,9 @@ public interface PostMapper {
             ORDER BY posted_at DESC;
     """)
     List<Post> selectPublicPosts();
+
+    // src/main/resources/mapper/PostMapper.xml
+    List<Post> getAllPosts(PostSearchForm form);
 
     @Select("""
             SELECT * FROM posts
@@ -45,5 +52,32 @@ public interface PostMapper {
               AND deleted = false
             ORDER BY posted_at DESC
     """)
-    List<PostTop> selectPostsByKeyword(String keyword);
+    List<Post> selectPostsByKeyword(String keyword);
+
+    @Select("""
+            SELECT * FROM posts
+            WHERE id = #{id}
+            AND deleted = false
+    """)
+    Post selectPostById(long id);
+
+    @Update("""
+        UPDATE posts
+        SET deleted = true
+        WHERE id = #{id}
+    """)
+    boolean deletePostById(long id);
+
+    @Update("""
+        UPDATE posts
+        SET
+            category = #{post.category},
+            title = #{post.title},
+            content = #{post.content},
+            posted_at = #{post.postedAt},
+            status = #{post.status},
+            updated_at = NOW()
+        WHERE id = #{post.id}
+    """)
+    boolean updatePost(@Param("post") Post post);
 }

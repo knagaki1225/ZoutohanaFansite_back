@@ -1,7 +1,11 @@
 package com.example.zoutohanafansite.mapper;
 
+import com.example.zoutohanafansite.entity.admin.project.ProjectCard;
 import com.example.zoutohanafansite.entity.admin.review.NominatedReviewCard;
+import com.example.zoutohanafansite.entity.admin.review.ReviewList;
+import com.example.zoutohanafansite.entity.form.ProjectSearchForm;
 import com.example.zoutohanafansite.entity.form.ReviewForm;
+import com.example.zoutohanafansite.entity.form.ReviewSearchForm;
 import com.example.zoutohanafansite.entity.review.Review;
 import com.example.zoutohanafansite.entity.admin.review.ReviewCard;
 import org.apache.ibatis.annotations.*;
@@ -49,6 +53,9 @@ public interface ReviewMapper {
     @Select("SELECT * FROM reviews WHERE id = #{id} AND deleted = false")
     Review selectReviewById(long id);
 
+    // src/main/resources/mapper/ReviewMapper.xml
+    List<ReviewList> getReviewsByUrlKey(ReviewSearchForm form, String urlKey);
+
     @Update("""
     UPDATE reviews
         SET
@@ -92,12 +99,20 @@ public interface ReviewMapper {
     @Select("""
         SELECT
             r.*,
-            p.name AS project_name
+            p.name AS project_name,
+            CASE
+                WHEN r.first_stage_passed = FALSE THEN 'INITIAL'
+                WHEN r.first_stage_passed = TRUE AND nr.id IS NULL THEN 'FIRST_STAGE_PASSED'
+                WHEN nr.id IS NOT NULL AND nr.review_awarded = FALSE THEN 'SECOND_STAGE_PASSED'
+                WHEN nr.review_awarded = TRUE THEN 'AWARDED'
+                ELSE 'UNKNOWN'
+            END AS status
         FROM reviews r
         JOIN projects p ON r.project_id = p.id
+        LEFT JOIN nominated_reviews nr ON r.id = nr.review_id
         WHERE r.user_id = #{userId}
-        AND r.deleted = FALSE
-        AND r.draft = FALSE
+            AND r.deleted = FALSE
+            AND r.draft = FALSE
     """)
     List<ReviewCard> selectReviewCardsByUserId(long userId);
 
@@ -169,4 +184,16 @@ public interface ReviewMapper {
     @Select("SELECT * FROM nominated_reviews WHERE project_id = #{projectId} AND deleted = false")
     List<NominatedReviewCard> selectNominatedReviewCardByProjectId(long projectId);
 
+    @Update("""
+        <script>
+            UPDATE reviews
+            SET first_stage_passed = #{passed}
+            WHERE id IN
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </script>
+    """)
+    void updateFirstStagePassed(@Param("ids") List<Long> ids,
+                                @Param("passed") boolean passed);
 }

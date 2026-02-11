@@ -6,27 +6,17 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class ReviewCard {
+public class ReviewList {
     private long id;
     private Long projectId;
-    private String projectName;
     private Long userId;
     private String userNickname;
     private String userAddress;
     private int userAgeGroup;
-    private UserGender userGender;  // enums/UserGender
-    private String userSelfIntroduction;
-    private Long bookIsbn;
+    private UserGender userGender;
     private String bookTitle;
-    private String bookPublisher;
-    private String bookAuthor;
     private String reviewTitle;
-    private String reviewContent;
-    private String reviewContentEdited;
     private int voteCount;
-    private boolean draft;
     private String status;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private Boolean deleted;
 }

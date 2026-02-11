@@ -1,5 +1,6 @@
 package com.example.zoutohanafansite.repository;
 
+import com.example.zoutohanafansite.entity.form.PostSearchForm;
 import com.example.zoutohanafansite.entity.post.Post;
 import com.example.zoutohanafansite.entity.post.PostTop;
 import com.example.zoutohanafansite.mapper.PostMapper;
@@ -27,8 +28,23 @@ public class PostRepository {
         return postMapper.selectPublicPostById(id);
     }
 
-    public List<PostTop> selectPostsByKeyword(String keyword){
+    public List<Post> selectPostsByKeyword(String keyword){
         return postMapper.selectPostsByKeyword(keyword);
     }
 
+    public List<Post> selectAllPosts(PostSearchForm form) {
+        return postMapper.getAllPosts(form);
+    }
+
+    public Post selectPostById(long id){
+        return postMapper.selectPostById(id);
+    }
+
+    public boolean deletePostById(long id){
+        return postMapper.deletePostById(id);
+    }
+
+    public boolean updatePost(Post post) {
+        return postMapper.updatePost(post);
+    }
 }
