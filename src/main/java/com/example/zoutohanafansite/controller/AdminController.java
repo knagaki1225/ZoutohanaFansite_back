@@ -14,11 +14,13 @@ import com.example.zoutohanafansite.entity.admin.review.ReviewCard;
 import com.example.zoutohanafansite.entity.review.Review;
 import com.example.zoutohanafansite.security.CustomAdminUserDetails;
 import com.example.zoutohanafansite.service.*;
+import org.apache.ibatis.type.TypeReference;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
@@ -32,8 +34,10 @@ public class AdminController {
     private final NotificationService notificationService;
     private final PostService postService;
     private final GenreService genreService;
+    private final ReviewGenreService reviewGenreService;
+    private final ObjectMapper objectMapper;
 
-    public AdminController(ProjectService projectService, UserService userService, ReviewService reviewService, NotificationTemplateService notificationTemplateService, NotificationService notificationService, PostService postService, GenreService genreService) {
+    public AdminController(ProjectService projectService, UserService userService, ReviewService reviewService, NotificationTemplateService notificationTemplateService, NotificationService notificationService, PostService postService, GenreService genreService, ReviewGenreService reviewGenreService, ObjectMapper objectMapper) {
         this.projectService = projectService;
         this.userService = userService;
         this.reviewService = reviewService;
@@ -41,6 +45,8 @@ public class AdminController {
         this.notificationService = notificationService;
         this.postService = postService;
         this.genreService = genreService;
+        this.reviewGenreService = reviewGenreService;
+        this.objectMapper = objectMapper;
     }
 
     @GetMapping("/dash")
@@ -143,7 +149,11 @@ public class AdminController {
     @GetMapping("/review/view")
     public String reviewView(@RequestParam long id, Model model) {
         ReviewCard reviewCard = reviewService.getReviewCardById(id);
+        List<Genre> genreOptions = genreService.selectAllGenre();
+        List<Genre> thisReviewGenres = reviewGenreService.getGenresByReviewId(id);
         model.addAttribute("review", reviewCard);
+        model.addAttribute("genreOptions", genreOptions);
+        model.addAttribute("thisReviewGenres", thisReviewGenres);
         return "admin/review_edit";
     }
 
@@ -156,6 +166,7 @@ public class AdminController {
         reviewService.changeStatusSingle(reviewId, targetStatus);
         return "redirect:/admin/review/view?id=" + reviewId;
     }
+
     // 書評一覧のステータス一括変更
     @PostMapping("/review/statusUpdate")
     public String statusUpdate(
@@ -165,6 +176,16 @@ public class AdminController {
 
         reviewService.changeStatus(reviewIds, targetStatus);
         return "redirect:/admin/review/list?urlKey=" + urlKey;
+    }
+
+    @PostMapping("/review/genreUpdate")
+    public String genreUpdate(
+            @RequestParam Long reviewId,
+            @RequestParam List<Long> genres) {
+
+        reviewGenreService.updateReviewGenres(reviewId, genres);
+
+        return "redirect:/admin/review/view?id=" + reviewId;
     }
 
     @PostMapping("/review/delete")
@@ -187,6 +208,10 @@ public class AdminController {
         return "redirect:/admin/review/list?urlKey=" + urlKey;
     }
 
+    @GetMapping("/review/print")
+    public String reviewPrint() {
+        return "admin/review_print";
+    }
 
     @GetMapping("/notification/template")
     public String notificationTemplateList(Model model, @RequestParam(defaultValue = "") String s){

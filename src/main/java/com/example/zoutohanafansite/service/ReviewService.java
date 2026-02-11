@@ -270,7 +270,10 @@ public class ReviewService {
     }
 
     /**
-     * 書評詳細での書評ステータス更新
+     * 書評詳細での書評ステータス更新(書評一覧での一括操作に横流し)
+     *
+     * @param id ステータスを変更する書評のID
+     * @param status 変更するステータス
      */
     @Transactional
     public void changeStatusSingle(Long id, String status) {
@@ -279,6 +282,9 @@ public class ReviewService {
 
     /**
      * 書評一覧でチェックした書評の一括操作
+     *
+     * @param ids ステータスを変更する書評たちのID
+     * @param status 変更するステータス
      */
     @Transactional
     public void changeStatus(List<Long> ids, String status) {
