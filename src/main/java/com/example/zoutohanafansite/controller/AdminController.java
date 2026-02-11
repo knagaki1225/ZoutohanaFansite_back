@@ -164,6 +164,27 @@ public class AdminController {
         return "redirect:/admin/review/list?urlKey=" + urlKey;
     }
 
+    @PostMapping("/review/delete")
+    public String deleteReview(
+            @RequestParam String urlKey,
+            @RequestParam Long reviewId,
+            @RequestParam String inputUserLoginId,
+            RedirectAttributes ra) {
+
+        ReviewCard review = reviewService.getReviewCardById(reviewId);
+
+        if (!review.getUserLoginId().equals(inputUserLoginId)) {
+            ra.addFlashAttribute("errorMessage", "投稿者のIDが一致しません");
+            return "redirect:/admin/review/view?id=" + reviewId;
+        }
+
+        reviewService.deleteReviewById(reviewId);
+
+        ra.addFlashAttribute("successMessage", "書評を削除しました");
+        return "redirect:/admin/review/list?urlKey=" + urlKey;
+    }
+
+
     @GetMapping("/notification/template")
     public String notificationTemplateList(Model model, @RequestParam(defaultValue = "") String s){
         List<NotificationTemplate> notificationTemplates;
