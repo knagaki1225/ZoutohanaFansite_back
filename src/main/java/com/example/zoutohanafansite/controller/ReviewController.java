@@ -5,6 +5,7 @@ import com.example.zoutohanafansite.entity.form.IsbnForm;
 import com.example.zoutohanafansite.entity.form.ReviewForm;
 import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.entity.review.Review;
+import com.example.zoutohanafansite.exception.AccessDeniedException;
 import com.example.zoutohanafansite.security.CustomUserDetails;
 import com.example.zoutohanafansite.service.ProjectService;
 import com.example.zoutohanafansite.service.ReviewService;
@@ -133,8 +134,8 @@ public class ReviewController {
     @GetMapping("/draft")
     public String editDraftReview(Model model, @RequestParam long reviewId, @AuthenticationPrincipal CustomUserDetails user){
         Review review = reviewService.getReviewById(reviewId);
-        if(!review.isDraft() || review.getUserId() != user.getUserId()){
-            // 不適切な書評にアクセス throw exception
+        if(review == null || !review.isDraft() || review.getUserId() != user.getUserId()){
+            throw new AccessDeniedException();
         }
 
         model.addAttribute("review", review);
@@ -229,9 +230,12 @@ public class ReviewController {
     @GetMapping("/edit/{id}")
     public String editReview(@PathVariable long id, Model model, @AuthenticationPrincipal CustomUserDetails user){
         Review review = reviewService.getReviewById(id);
+        if(review == null || review.getUserId() != user.getUserId()){
+            throw new AccessDeniedException();
+        }
         Project project = projectService.getProjectById(review.getProjectId());
-        if(review.getUserId() != user.getUserId() || project.getStatus() != ProjectStatus.DURING_SUBMISSION){
-            // 不正アクセス
+        if(project.getStatus() != ProjectStatus.DURING_SUBMISSION){
+            throw new AccessDeniedException();
         }
 
         ReviewForm reviewForm = new ReviewForm();
@@ -252,8 +256,8 @@ public class ReviewController {
     @PostMapping("/edit/{id}")
     public String updateReview(@PathVariable long id, ReviewForm reviewForm, RedirectAttributes redirectAttributes, @AuthenticationPrincipal CustomUserDetails user){
         Review review = reviewService.getReviewById(id);
-        if(review.getUserId() != user.getUserId()){
-            // 不正アクセス
+        if(review == null || review.getUserId() != user.getUserId()){
+            throw new AccessDeniedException();
         }
 
         reviewService.editReview(reviewForm, id);

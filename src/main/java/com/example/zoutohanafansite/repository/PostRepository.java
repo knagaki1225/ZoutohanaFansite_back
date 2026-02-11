@@ -28,7 +28,7 @@ public class PostRepository {
         return postMapper.selectPublicPostById(id);
     }
 
-    public List<PostTop> selectPostsByKeyword(String keyword){
+    public List<Post> selectPostsByKeyword(String keyword){
         return postMapper.selectPostsByKeyword(keyword);
     }
 

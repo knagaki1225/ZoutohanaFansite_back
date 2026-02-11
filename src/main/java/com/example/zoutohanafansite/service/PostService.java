@@ -148,10 +148,19 @@ public class PostService {
      * お知らせタイトル検索
      *
      * @param keyword 検索ワード
-     * @return List<PostTop>
+     * @return List<Post>
      */
-    public List<PostTop> getPostTopsByKeyword(String keyword){
+    public List<Post> getPostsByKeyword(String keyword){
         return postRepository.selectPostsByKeyword(keyword);
+    }
+
+    public List<PostTop> getPostTopsByKeyword(String keyword){
+        List<PostTop> result = new ArrayList<>();
+        List<Post> posts = getPostsByKeyword(keyword);
+        for(Post post : posts){
+            result.add(new PostTop(post));
+        }
+        return result;
     }
 
     /**
