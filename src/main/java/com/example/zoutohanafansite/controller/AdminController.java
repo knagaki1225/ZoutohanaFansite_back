@@ -215,6 +215,32 @@ public class AdminController {
         return "admin/review_print";
     }
 
+    @GetMapping("/genre/list")
+    public String genreList(GenreSearchForm form, Model model) {
+        List<Genre> genres = genreService.getGenreList(form);
+        model.addAttribute("genres", genres);
+        model.addAttribute("form", form);
+        return "admin/book_genre_list";
+    }
+
+    @PostMapping("/genre/create")
+    public String createGenre(Genre genre) {
+        genreService.createGenre(genre);
+        return "redirect:/admin/genre/list";
+    }
+
+    @PostMapping("/genre/update")
+    public String updateGenre(Genre genre) {
+        genreService.updateGenre(genre);
+        return "redirect:/admin/genre/list";
+    }
+
+    @PostMapping("/genre/delete")
+    public String deleteGenre(@RequestParam Long id) {
+        genreService.deleteById(id);
+        return "redirect:/admin/genre/list";
+    }
+
     @GetMapping("/notification/template")
     public String notificationTemplateList(Model model, @RequestParam(defaultValue = "") String s){
         List<NotificationTemplate> notificationTemplates;
