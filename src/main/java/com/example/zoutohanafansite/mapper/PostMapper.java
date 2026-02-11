@@ -1,13 +1,11 @@
 package com.example.zoutohanafansite.mapper;
 
+import com.example.zoutohanafansite.entity.auth.AdminUser;
 import com.example.zoutohanafansite.entity.form.PostSearchForm;
 import com.example.zoutohanafansite.entity.post.Post;
 import com.example.zoutohanafansite.entity.post.PostTop;
 import com.example.zoutohanafansite.entity.project.Project;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -80,4 +78,24 @@ public interface PostMapper {
         WHERE id = #{post.id}
     """)
     boolean updatePost(@Param("post") Post post);
+
+    @Insert("""
+        INSERT INTO posts (
+            admin_id,
+            category,
+            title,
+            content,
+            posted_at,
+            status
+        ) VALUES (
+            #{adminId},
+            #{category},
+            #{title},
+            #{content},
+            #{postedAt},
+            #{status}
+        )
+    """)
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
+    void createPost(Post post);
 }

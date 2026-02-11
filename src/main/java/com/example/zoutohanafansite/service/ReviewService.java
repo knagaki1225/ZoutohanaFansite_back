@@ -270,10 +270,18 @@ public class ReviewService {
     }
 
     /**
+     * 書評詳細での書評ステータス更新
+     */
+    @Transactional
+    public void changeStatusSingle(Long id, String status) {
+        changeStatus(List.of(id), status);
+    }
+
+    /**
      * 書評一覧でチェックした書評の一括操作
      */
     @Transactional
-    public void bulkChangeStatus(List<Long> ids, String status) {
+    public void changeStatus(List<Long> ids, String status) {
 
         switch (status) {
 

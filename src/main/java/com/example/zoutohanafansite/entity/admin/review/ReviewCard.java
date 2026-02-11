@@ -9,8 +9,10 @@ import java.time.LocalDateTime;
 public class ReviewCard {
     private long id;
     private Long projectId;
+    private String projectUrlKey;
     private String projectName;
     private Long userId;
+    private String userLoginId;
     private String userNickname;
     private String userAddress;
     private int userAgeGroup;

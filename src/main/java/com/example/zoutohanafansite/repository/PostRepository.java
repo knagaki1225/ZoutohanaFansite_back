@@ -1,5 +1,6 @@
 package com.example.zoutohanafansite.repository;
 
+import com.example.zoutohanafansite.entity.auth.AdminUser;
 import com.example.zoutohanafansite.entity.form.PostSearchForm;
 import com.example.zoutohanafansite.entity.post.Post;
 import com.example.zoutohanafansite.entity.post.PostTop;
@@ -46,5 +47,9 @@ public class PostRepository {
 
     public boolean updatePost(Post post) {
         return postMapper.updatePost(post);
+    }
+
+    public void createPost(Post post) {
+        postMapper.createPost(post);
     }
 }

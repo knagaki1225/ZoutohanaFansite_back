@@ -87,19 +87,9 @@ public interface ReviewMapper {
     @Select("""
         SELECT
             r.*,
-            p.name AS project_name
-        FROM reviews r
-        JOIN projects p ON r.project_id = p.id
-        WHERE r.id = #{id}
-        AND r.deleted = FALSE
-        AND r.draft = FALSE
-    """)
-    ReviewCard selectReviewCardById(long id);
-
-    @Select("""
-        SELECT
-            r.*,
+            p.url_key AS project_url_key,
             p.name AS project_name,
+            u.login_id AS user_login_id,
             CASE
                 WHEN r.first_stage_passed = FALSE THEN 'INITIAL'
                 WHEN r.first_stage_passed = TRUE AND nr.id IS NULL THEN 'FIRST_STAGE_PASSED'
@@ -109,6 +99,30 @@ public interface ReviewMapper {
             END AS status
         FROM reviews r
         JOIN projects p ON r.project_id = p.id
+        LEFT JOIN users u ON r.user_id = u.id
+        LEFT JOIN nominated_reviews nr ON r.id = nr.review_id
+        WHERE r.id = #{id}
+            AND r.deleted = FALSE
+            AND r.draft = FALSE
+    """)
+    ReviewCard selectReviewCardById(long id);
+
+    @Select("""
+        SELECT
+            r.*,
+            p.url_key AS project_url_key,
+            p.name AS project_name,
+            u.login_id AS user_login_id,
+            CASE
+                WHEN r.first_stage_passed = FALSE THEN 'INITIAL'
+                WHEN r.first_stage_passed = TRUE AND nr.id IS NULL THEN 'FIRST_STAGE_PASSED'
+                WHEN nr.id IS NOT NULL AND nr.review_awarded = FALSE THEN 'SECOND_STAGE_PASSED'
+                WHEN nr.review_awarded = TRUE THEN 'AWARDED'
+                ELSE 'UNKNOWN'
+            END AS status
+        FROM reviews r
+        JOIN projects p ON r.project_id = p.id
+        LEFT JOIN users u ON r.user_id = u.id
         LEFT JOIN nominated_reviews nr ON r.id = nr.review_id
         WHERE r.user_id = #{userId}
             AND r.deleted = FALSE

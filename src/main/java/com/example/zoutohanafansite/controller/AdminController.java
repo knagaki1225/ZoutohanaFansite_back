@@ -6,6 +6,7 @@ import com.example.zoutohanafansite.entity.admin.review.ReviewList;
 import com.example.zoutohanafansite.entity.auth.User;
 import com.example.zoutohanafansite.entity.enums.ProjectStatus;
 import com.example.zoutohanafansite.entity.form.*;
+import com.example.zoutohanafansite.entity.genre.Genre;
 import com.example.zoutohanafansite.entity.notificationtemplate.NotificationTemplate;
 import com.example.zoutohanafansite.entity.post.Post;
 import com.example.zoutohanafansite.entity.project.Project;
@@ -30,14 +31,16 @@ public class AdminController {
     private final NotificationTemplateService notificationTemplateService;
     private final NotificationService notificationService;
     private final PostService postService;
+    private final GenreService genreService;
 
-    public AdminController(ProjectService projectService, UserService userService, ReviewService reviewService, NotificationTemplateService notificationTemplateService, NotificationService notificationService, PostService postService) {
+    public AdminController(ProjectService projectService, UserService userService, ReviewService reviewService, NotificationTemplateService notificationTemplateService, NotificationService notificationService, PostService postService, GenreService genreService) {
         this.projectService = projectService;
         this.userService = userService;
         this.reviewService = reviewService;
         this.notificationTemplateService = notificationTemplateService;
         this.notificationService = notificationService;
         this.postService = postService;
+        this.genreService = genreService;
     }
 
     @GetMapping("/dash")
@@ -80,13 +83,6 @@ public class AdminController {
         userService.updateStatus(status, id);
         User user = userService.getUserById(id);
         return "redirect:/admin/account/view?loginId=" + user.getLoginId();
-    }
-
-    @GetMapping("/review/edit")
-    public String reviewView(@RequestParam long id, Model model) {
-        ReviewCard reviewCard = reviewService.getReviewCardById(id);
-        model.addAttribute("review", reviewCard);
-        return "admin/review_edit";
     }
 
     @GetMapping("/project/list")
@@ -144,15 +140,53 @@ public class AdminController {
         return "admin/review_list";
     }
 
-    @PostMapping("/review/bulk-update")
-    public String bulkUpdate(
+    @GetMapping("/review/view")
+    public String reviewView(@RequestParam long id, Model model) {
+        ReviewCard reviewCard = reviewService.getReviewCardById(id);
+        model.addAttribute("review", reviewCard);
+        return "admin/review_edit";
+    }
+
+    // 書評のステータス更新
+    @PostMapping("/review/statusUpdateSingle")
+    public String reviewStatusUpdateSingle(
+            @RequestParam Long reviewId,
+            @RequestParam String targetStatus) {
+
+        reviewService.changeStatusSingle(reviewId, targetStatus);
+        return "redirect:/admin/review/view?id=" + reviewId;
+    }
+    // 書評一覧のステータス一括変更
+    @PostMapping("/review/statusUpdate")
+    public String statusUpdate(
             @RequestParam String urlKey,
             @RequestParam List<Long> reviewIds,
             @RequestParam String targetStatus) {
 
-        reviewService.bulkChangeStatus(reviewIds, targetStatus);
+        reviewService.changeStatus(reviewIds, targetStatus);
         return "redirect:/admin/review/list?urlKey=" + urlKey;
     }
+
+    @PostMapping("/review/delete")
+    public String deleteReview(
+            @RequestParam String urlKey,
+            @RequestParam Long reviewId,
+            @RequestParam String inputUserLoginId,
+            RedirectAttributes ra) {
+
+        ReviewCard review = reviewService.getReviewCardById(reviewId);
+
+        if (!review.getUserLoginId().equals(inputUserLoginId)) {
+            ra.addFlashAttribute("errorMessage", "投稿者のIDが一致しません");
+            return "redirect:/admin/review/view?id=" + reviewId;
+        }
+
+        reviewService.deleteReviewById(reviewId);
+
+        ra.addFlashAttribute("successMessage", "書評を削除しました");
+        return "redirect:/admin/review/list?urlKey=" + urlKey;
+    }
+
 
     @GetMapping("/notification/template")
     public String notificationTemplateList(Model model, @RequestParam(defaultValue = "") String s){
@@ -262,11 +296,14 @@ public class AdminController {
     }
 
     @GetMapping("/post/view")
-    public String postView(@RequestParam(value="id", required = false) long id, Model model) {
-        if (id < 0) {
+    public String postView(@RequestParam(value="id", required = false) Long id, Model model) {
+        if (id == null) {
             return "redirect:/admin/post/list";
         }
         Post post = postService.getPostById(id);
+        if (post == null) {
+            return "redirect:/admin/post/list";
+        }
         model.addAttribute("post", post);
         return "admin/post_edit";
     }
@@ -281,5 +318,17 @@ public class AdminController {
     public String deletePost(@RequestParam Long id) {
         postService.deletePostById(id);
         return "redirect:/admin/post/list";
+    }
+
+    @GetMapping("/post/create")
+    public String createPostForm(){
+        return "admin/post_create";
+    }
+
+    @PostMapping("/post/create")
+    public String createPost(Post post, @AuthenticationPrincipal CustomAdminUserDetails user) {
+        post.setAdminId((int) user.getUserId());
+        Post createdPost = postService.createPost(post);
+        return "redirect:/admin/post/view?id=" + createdPost.getId();
     }
 }
