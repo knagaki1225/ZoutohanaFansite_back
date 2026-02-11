@@ -6,6 +6,7 @@ import com.example.zoutohanafansite.entity.admin.review.ReviewList;
 import com.example.zoutohanafansite.entity.auth.User;
 import com.example.zoutohanafansite.entity.enums.ProjectStatus;
 import com.example.zoutohanafansite.entity.form.*;
+import com.example.zoutohanafansite.entity.genre.Genre;
 import com.example.zoutohanafansite.entity.notificationtemplate.NotificationTemplate;
 import com.example.zoutohanafansite.entity.post.Post;
 import com.example.zoutohanafansite.entity.project.Project;
@@ -30,14 +31,16 @@ public class AdminController {
     private final NotificationTemplateService notificationTemplateService;
     private final NotificationService notificationService;
     private final PostService postService;
+    private final GenreService genreService;
 
-    public AdminController(ProjectService projectService, UserService userService, ReviewService reviewService, NotificationTemplateService notificationTemplateService, NotificationService notificationService, PostService postService) {
+    public AdminController(ProjectService projectService, UserService userService, ReviewService reviewService, NotificationTemplateService notificationTemplateService, NotificationService notificationService, PostService postService, GenreService genreService) {
         this.projectService = projectService;
         this.userService = userService;
         this.reviewService = reviewService;
         this.notificationTemplateService = notificationTemplateService;
         this.notificationService = notificationService;
         this.postService = postService;
+        this.genreService = genreService;
     }
 
     @GetMapping("/dash")
