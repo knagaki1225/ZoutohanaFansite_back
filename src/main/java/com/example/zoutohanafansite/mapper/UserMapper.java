@@ -34,4 +34,11 @@ public interface UserMapper {
 
     @Update("UPDATE users SET deleted = true WHERE id = #{id}")
     void deleteUser(long id);
+
+    @Update("""
+        UPDATE users
+        SET nickname = #{nickname}, self_introduction = #{selfIntroduction}, address = #{address}, birth_year = #{birthYear}, icon = #{icon}, updated_at = CURRENT_TIMESTAMP
+        WHERE login_id = #{loginId}
+    """)
+    void updateUser(User user);
 }

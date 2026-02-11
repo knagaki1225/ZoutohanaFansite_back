@@ -56,10 +56,7 @@ public class TopController {
     }
 
     @GetMapping("/news")
-    public String news(Model model, @RequestParam String category, @RequestParam(defaultValue = "1") int page){
-        PostPagination postPagination = postService.getPostPagination(category, page);
-        model.addAttribute("postPagination", postPagination);
-
+    public String news(Model model, @RequestParam(defaultValue = "new") String category, @RequestParam(defaultValue = "1") int page){
         String categoryName = "";
         switch (category){
             case "new":
@@ -74,8 +71,14 @@ public class TopController {
             case "else":
                 categoryName = "その他情報";
                 break;
+            default:
+                categoryName = "新着情報";
+                category = "new";
         }
         model.addAttribute("category", categoryName);
+
+        PostPagination postPagination = postService.getPostPagination(category, page);
+        model.addAttribute("postPagination", postPagination);
         return "info/post-list";
     }
 
@@ -98,7 +101,7 @@ public class TopController {
     }
 
     @GetMapping("/projects")
-    public String project(Model model, @RequestParam String s){
+    public String project(Model model, @RequestParam(defaultValue = "ongoing") String s){
         List<Project> projects;
         Boolean status = false;
         if(s.equals("past")){

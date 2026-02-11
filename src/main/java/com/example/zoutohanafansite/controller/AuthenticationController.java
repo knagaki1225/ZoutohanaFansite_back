@@ -68,4 +68,20 @@ public class AuthenticationController {
         model.addAttribute("loginId", user.getLoginId());
         return "auth/edit-account";
     }
+
+    @PostMapping("/edit")
+    public String accountUpdate(AccountEditForm form, @AuthenticationPrincipal CustomUserDetails customUser){
+        User user = userService.getUserByLoginId(customUser.getUsername());
+
+        user.setNickname(form.getNickname());
+        user.setIcon(form.getIcon());
+        user.setAddress(form.getAddress());
+        user.setBirthYear(form.getBirthYear());
+        user.setSelfIntroduction(form.getSelfIntroduction());
+
+        userService.updateUser(user);
+
+        return "redirect:/mypage";
+
+    }
 }

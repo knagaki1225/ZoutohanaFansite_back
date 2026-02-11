@@ -134,11 +134,21 @@ public class ReviewController {
     @GetMapping("/draft")
     public String editDraftReview(Model model, @RequestParam long reviewId, @AuthenticationPrincipal CustomUserDetails user){
         Review review = reviewService.getReviewById(reviewId);
-        if(review == null || !review.isDraft() || review.getUserId() != user.getUserId()){
+        if(review == null || !review.isDraft() || review.getUserId() != user.getUserId() || project.getStatus() != ProjectStatus.DURING_SUBMISSION){
             throw new AccessDeniedException();
         }
 
-        model.addAttribute("review", review);
+        ReviewForm reviewForm = new ReviewForm();
+        reviewForm.setProjectId(review.getProjectId());
+        reviewForm.setBookTitle(review.getBookTitle());
+        reviewForm.setAuthor(review.getBookAuthor());
+        reviewForm.setPublisher(review.getBookPublisher());
+        reviewForm.setIsbn(review.getBookIsbn());
+        reviewForm.setReviewTitle(review.getReviewTitle());
+        reviewForm.setReviewContent(review.getReviewContent());
+
+
+        model.addAttribute("review", reviewForm);
         model.addAttribute("draft", true);
 
         return  "books/review-form";
@@ -168,39 +178,39 @@ public class ReviewController {
     }
 
     @PostMapping("/draft/update")
-    public String updateDraftReview(Review review){
-        Review draftReview = reviewService.getReviewById(review.getId());
+    public String updateDraftReview(ReviewForm review, @RequestParam long reviewId){
+        Review draftReview = reviewService.getReviewById(reviewId);
         draftReview.setReviewContent(review.getReviewContent());
         draftReview.setReviewTitle(review.getReviewTitle());
         draftReview.setDraft(true);
 
         reviewService.updateDraftReview(draftReview);
-        return "redirect:/review/draft?reviewId=" + review.getId();
+        return "redirect:/review/draft?reviewId=" + reviewId;
     }
 
     @PostMapping("/draft/new")
-    public String draftNewReview(Review review, RedirectAttributes redirectAttributes){
-        redirectAttributes.addFlashAttribute("review", review);
+    public String draftNewReview(ReviewForm review, RedirectAttributes redirectAttributes, @RequestParam long reviewId){
+        redirectAttributes.addFlashAttribute("reviewForm", review);
+        redirectAttributes.addFlashAttribute("id", reviewId);
         return "redirect:/review/draft/confirm";
     }
 
     @GetMapping("/draft/confirm")
-    public String draftConfirm(Review review, Model model){
-        model.addAttribute("review", review);
+    public String draftConfirm(Model model){
         model.addAttribute("draft", true);
 
         return  "books/book-review";
     }
 
     @PostMapping("/draft/confirm")
-    public String updateDraftReview(Review review, RedirectAttributes redirectAttributes){
-        Review draftReview = reviewService.getReviewById(review.getId());
-        draftReview.setReviewContent(review.getReviewContent());
-        draftReview.setReviewTitle(review.getReviewTitle());
+    public String updateDraftReview(ReviewForm reviewForm, RedirectAttributes redirectAttributes, @RequestParam long id){
+        Review draftReview = reviewService.getReviewById(id);
+        draftReview.setReviewContent(reviewForm.getReviewContent());
+        draftReview.setReviewTitle(reviewForm.getReviewTitle());
         draftReview.setDraft(false);
 
         reviewService.updateDraftReview(draftReview);
-        redirectAttributes.addFlashAttribute("project", projectService.getProjectById(review.getProjectId()));
+        redirectAttributes.addFlashAttribute("project", projectService.getProjectById(reviewForm.getProjectId()));
 
         return "redirect:/review/complete";
     }
@@ -218,7 +228,8 @@ public class ReviewController {
     @PostMapping("/delete/{id}")
     public String deleteReview(@PathVariable long id, RedirectAttributes redirectAttributes, @AuthenticationPrincipal CustomUserDetails user){
         Review review = reviewService.getReviewById(id);
-        if(review.getUserId() != user.getUserId()){
+        Project project = projectService.getProjectById(review.getProjectId());
+        if(review.getUserId() != user.getUserId() || project.getStatus() != ProjectStatus.DURING_SUBMISSION){
             // 不正アクセス
         }
         reviewService.deleteReviewById(review.getId());

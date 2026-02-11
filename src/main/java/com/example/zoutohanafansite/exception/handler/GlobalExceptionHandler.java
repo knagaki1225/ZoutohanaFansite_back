@@ -10,6 +10,35 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+//    @ExceptionHandler(Exception.class)
+//    public String exception(Exception ex, RedirectAttributes redirectAttributes){
+//        String status ="EXCEPTION";
+//        String message = "エラーが発生しました。";
+//        String redirectPath = "redirect:/error-4xx";
+//
+//        // ResponseStatusException（明示的な例外）の判定
+//        if (ex instanceof ResponseStatusException rse) {
+//            HttpStatusCode code = rse.getStatusCode();
+//
+//            if (code.equals(HttpStatus.NOT_FOUND)) { // 404
+//                status = "NOT FOUND";
+//                message = "ページが見つかりません。";
+//            } else if (code.equals(HttpStatus.FORBIDDEN)) { // 403
+//                status = "FORBIDDEN";
+//                message = "権限がありません。ログインをしてください。";
+//            } else if (code.is4xxClientError()) { // その他400系
+//                message = "エラーはが発生しました。";
+//                status = "EXCEPTION";
+//            }
+//        }
+//
+//        // 自作クラスにセットしてフラッシュ属性で渡す
+//        ErrorStatus errorStatus = new ErrorStatus(status, message);
+//        redirectAttributes.addFlashAttribute("errorStatus", errorStatus);
+//
+//        return redirectPath;
+//    }
+  
     @ExceptionHandler(AccessDeniedException.class)
     public String handleAccessDeniedException(AccessDeniedException ex, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         ErrorStatus errorStatus = new ErrorStatus("FORBIDDEN", "アクセスする権限がありません");
