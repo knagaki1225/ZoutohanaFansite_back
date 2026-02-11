@@ -8,6 +8,7 @@ import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.entity.project.ProjectMyPage;
 import com.example.zoutohanafansite.entity.review.Review;
 import com.example.zoutohanafansite.entity.review.ReviewMyPage;
+import com.example.zoutohanafansite.exception.AccessDeniedException;
 import com.example.zoutohanafansite.security.CustomUserDetails;
 import com.example.zoutohanafansite.service.NotificationService;
 import com.example.zoutohanafansite.service.ProjectService;
@@ -76,8 +77,12 @@ public class MyPageController {
     }
 
     @GetMapping("/review/detail/{reviewId}")
-    public String reviewDetail(@PathVariable("reviewId") long reviewId, Model model){
+    public String reviewDetail(@PathVariable("reviewId") long reviewId, Model model, @AuthenticationPrincipal CustomUserDetails user){
         Review review = reviewService.getReviewById(reviewId);
+
+        if(review == null || review.getUserId() != user.getUserId()){
+            throw new AccessDeniedException();
+        }
         model.addAttribute("review", review);
         Project project = projectService.getProjectById(review.getProjectId());
         model.addAttribute("project", project);
@@ -95,6 +100,11 @@ public class MyPageController {
     @GetMapping("/notification/{id}")
     public String notificationDetail(@PathVariable long id, @AuthenticationPrincipal CustomUserDetails user, Model model){
         Notification notification = notificationService.selectNotificationById(id);
+
+        if(notification == null || notification.getUserId() != user.getUserId()){
+            throw new AccessDeniedException();
+        }
+
         model.addAttribute("notification", notification);
 
         notificationService.updateNotificationSeen(id);

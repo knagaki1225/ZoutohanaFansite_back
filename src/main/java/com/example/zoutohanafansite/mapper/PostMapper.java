@@ -52,7 +52,7 @@ public interface PostMapper {
               AND deleted = false
             ORDER BY posted_at DESC
     """)
-    List<PostTop> selectPostsByKeyword(String keyword);
+    List<Post> selectPostsByKeyword(String keyword);
 
     @Select("""
             SELECT * FROM posts
