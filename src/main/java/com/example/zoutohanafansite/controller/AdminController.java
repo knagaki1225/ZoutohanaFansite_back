@@ -140,9 +140,11 @@ public class AdminController {
     public String reviewList(@RequestParam String urlKey, ReviewSearchForm form, Model model) {
         Project project = projectService.getProjectByUrlKey(urlKey);
         List<ReviewList> reviews = reviewService.getReviewsByUrlKey(form, urlKey);
+        List<Genre> genres = genreService.selectAllGenre();
         model.addAttribute("project", project);
         model.addAttribute("reviews", reviews);
         model.addAttribute("form", form);
+        model.addAttribute("genres", genres);
         return "admin/review_list";
     }
 
