@@ -15,6 +15,7 @@ public class ReviewApiData {
     private String address;
     private String text;
     private Integer voteCount;
+    private String icon;
 
     public ReviewApiData(Review review, String imageUrl) {
         this.id = review.getId();
@@ -27,5 +28,6 @@ public class ReviewApiData {
         this.address = review.getUserAddress();
         this.text = review.getUserSelfIntroduction();
         this.voteCount = review.getVoteCount();
+        this.icon = "/api/image/icon" + review.getUserIcon() + ".png";
     }
 }
