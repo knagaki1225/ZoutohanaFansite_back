@@ -134,6 +134,7 @@ public class ReviewController {
     @GetMapping("/draft")
     public String editDraftReview(Model model, @RequestParam long reviewId, @AuthenticationPrincipal CustomUserDetails user){
         Review review = reviewService.getReviewById(reviewId);
+        Project project = projectService.getProjectById(review.getProjectId());
         if(review == null || !review.isDraft() || review.getUserId() != user.getUserId() || project.getStatus() != ProjectStatus.DURING_SUBMISSION){
             throw new AccessDeniedException();
         }
@@ -218,7 +219,7 @@ public class ReviewController {
     @PostMapping("/draft/delete")
     public String deleteDraftReview(Review review, @AuthenticationPrincipal CustomUserDetails user){
         if(review.getUserId() != user.getUserId()){
-            // 不正アクセス
+
         }
 
         reviewService.deleteReviewById(review.getId());
@@ -230,7 +231,7 @@ public class ReviewController {
         Review review = reviewService.getReviewById(id);
         Project project = projectService.getProjectById(review.getProjectId());
         if(review.getUserId() != user.getUserId() || project.getStatus() != ProjectStatus.DURING_SUBMISSION){
-            // 不正アクセス
+            throw new IllegalStateException();
         }
         reviewService.deleteReviewById(review.getId());
         String toast = "削除完了";
