@@ -159,6 +159,7 @@ public class AdminController {
         }
         Project project = projectService.getProjectByUrlKey(urlKey);
         AdminProjectEditForm form = new AdminProjectEditForm();
+        form.setId(project.getId());
         form.setPublished(project.isPublished());
         form.setStatus(project.getStatus());
         form.setName(project.getName());
@@ -435,8 +436,8 @@ public class AdminController {
 
     @GetMapping("/notification/send/{id}")
     public String notificationSend(@PathVariable long id, Model model){
-        Review review = reviewService.getReviewById(id);
-        model.addAttribute("review", review);
+        ReviewCard reviewCard = reviewService.getReviewCardById(id);
+        model.addAttribute("review", reviewCard);
 
         AdminNotificationSendForm adminNotificationSendForm = new AdminNotificationSendForm();
         model.addAttribute("form", adminNotificationSendForm);
@@ -446,7 +447,6 @@ public class AdminController {
 
     @PostMapping("/notification/send/{id}")
     public String notificationSendPost(@PathVariable long id, Model model, AdminNotificationSendForm form, @AuthenticationPrincipal CustomAdminUserDetails user){
-        Review review = reviewService.getReviewById(id);
         notificationService.insertNotificationByForm(form, id, user.getUserId());
 
         return "redirect:/admin/notification/template";

@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class AdminProjectEditForm {
+    private Long id;
     private boolean published;
     private ProjectStatus status;
     private String name;
