@@ -75,15 +75,15 @@ public class ReviewRepository {
         return reviewMapper.selectReviewByUrlKeyAndIdList(urlKey, idList);
     }
 
-    public List<NominatedReviewCard> selectNominatedReviewCardByProjectId(long projectId) {
-        return reviewMapper.selectNominatedReviewCardByProjectId(projectId);
-    }
-
     public List<ReviewList> getReviewsByUrlKey(ReviewSearchForm form, String urlKey) {
         return reviewMapper.getReviewsByUrlKey(form, urlKey);
     }
 
     public void updateFirstStagePassed(List<Long> ids, boolean passed) {
         reviewMapper.updateFirstStagePassed(ids, passed);
+    }
+
+    public List<ReviewCard> selectReviewCardForExport(String urlKey) {
+        return reviewMapper.selectReviewCardForExport(urlKey);
     }
 }

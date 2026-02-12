@@ -195,9 +195,6 @@ public interface ReviewMapper {
     """)
     List<Review> selectReviewByUrlKeyAndIdList(String urlKey, List<Long> idList);
 
-    @Select("SELECT * FROM nominated_reviews WHERE project_id = #{projectId} AND deleted = false")
-    List<NominatedReviewCard> selectNominatedReviewCardByProjectId(long projectId);
-
     @Update("""
         <script>
             UPDATE reviews
@@ -210,4 +207,33 @@ public interface ReviewMapper {
     """)
     void updateFirstStagePassed(@Param("ids") List<Long> ids,
                                 @Param("passed") boolean passed);
+
+    @Select("""
+    SELECT
+        r.*,
+        u.login_id AS userLoginId,
+        CASE
+            WHEN r.first_stage_passed = FALSE THEN '一次審査未通過'
+            WHEN r.first_stage_passed = TRUE AND nr.id IS NULL THEN '一次審査通過'
+            WHEN nr.id IS NOT NULL AND nr.review_awarded = FALSE THEN 'ノミネート'
+            WHEN nr.review_awarded = TRUE THEN '大賞'
+            ELSE 'UNKNOWN'
+        END AS status
+    FROM reviews r
+    JOIN projects p ON r.project_id = p.id
+    LEFT JOIN nominated_reviews nr ON r.id = nr.review_id
+    LEFT JOIN users u ON r.user_id = u.id
+    WHERE p.url_key = #{urlKey}
+        AND r.deleted = FALSE
+        AND r.draft = FALSE
+    ORDER BY
+        CASE
+        WHEN r.first_stage_passed = FALSE THEN 1
+        WHEN r.first_stage_passed = TRUE AND nr.id IS NULL THEN 2
+        WHEN nr.id IS NOT NULL AND nr.review_awarded = FALSE THEN 3
+        WHEN nr.review_awarded = TRUE THEN 4
+        ELSE 5
+        END DESC
+    """)
+    List<ReviewCard> selectReviewCardForExport(String urlKey);
 }

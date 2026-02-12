@@ -10,6 +10,7 @@ public class NominatedReviewCard {
     private long id;
     private Long projectId;
     private Long userId;
+    private String userLoginId;
     private String userNickname;
     private String userAddress;
     private int userAgeGroup;
