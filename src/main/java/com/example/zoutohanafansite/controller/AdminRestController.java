@@ -1,14 +1,15 @@
 package com.example.zoutohanafansite.controller;
 
+import com.example.zoutohanafansite.entity.admin.notification.NotificationSend;
 import com.example.zoutohanafansite.entity.admin.notification.NotificationTemplateContent;
 import com.example.zoutohanafansite.entity.admin.notification.NotificationTemplateList;
 import com.example.zoutohanafansite.entity.notificationtemplate.NotificationTemplate;
+import com.example.zoutohanafansite.security.CustomAdminUserDetails;
+import com.example.zoutohanafansite.service.NotificationService;
 import com.example.zoutohanafansite.service.NotificationTemplateService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +18,11 @@ import java.util.List;
 @RequestMapping("/api/admin")
 public class AdminRestController {
     private final NotificationTemplateService notificationTemplateService;
+    private final NotificationService notificationService;
 
-    public AdminRestController(NotificationTemplateService notificationTemplateService) {
+    public AdminRestController(NotificationTemplateService notificationTemplateService, NotificationService notificationService) {
         this.notificationTemplateService = notificationTemplateService;
+        this.notificationService = notificationService;
     }
 
     @GetMapping("/notification/template/list")
@@ -43,5 +46,11 @@ public class AdminRestController {
         notificationTemplateContent.setTitle(notificationTemplate.getTitle());
         notificationTemplateContent.setContent(notificationTemplate.getContent());
         return ResponseEntity.ok(notificationTemplateContent);
+    }
+
+    @PostMapping("/notification/send")
+    public ResponseEntity<Void> sendNotification(@RequestBody NotificationSend notificationSend, @AuthenticationPrincipal CustomAdminUserDetails user){
+        notificationService.insertBulkNotification(notificationSend, user.getUserId());
+        return ResponseEntity.ok().build();
     }
 }
