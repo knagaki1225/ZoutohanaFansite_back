@@ -1,6 +1,7 @@
 package com.example.zoutohanafansite.mapper;
 
 import com.example.zoutohanafansite.entity.admin.project.ProjectCard;
+import com.example.zoutohanafansite.entity.enums.ProjectStatus;
 import com.example.zoutohanafansite.entity.form.ProjectSearchForm;
 import com.example.zoutohanafansite.entity.post.Post;
 import com.example.zoutohanafansite.entity.project.Project;
@@ -145,4 +146,18 @@ public interface ProjectMapper {
     """)
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     void createProject(Project project);
+
+    @Update("""
+        UPDATE projects
+        SET main_img_url = #{urlText}
+        WHERE id = #{id}
+    """)
+    void updateImageUrl(String urlText, long id);
+
+    @Update("""
+        UPDATE projects
+        SET status = #{status}
+        WHERE url_key = #{urlKey}
+    """)
+    void updateStatus(ProjectStatus status, String urlKey);
 }

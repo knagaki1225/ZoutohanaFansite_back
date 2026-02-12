@@ -2,6 +2,7 @@ package com.example.zoutohanafansite.service;
 
 import com.example.zoutohanafansite.entity.admin.project.ProjectCard;
 import com.example.zoutohanafansite.entity.enums.ProjectStatus;
+import com.example.zoutohanafansite.entity.form.AdminProjectCreateForm;
 import com.example.zoutohanafansite.entity.form.ProjectSearchForm;
 import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.repository.ProjectRepository;
@@ -22,10 +23,22 @@ public class ProjectService {
     /**
      * 企画を作成
      *
-     * @param project 作成する企画の内容
+     * @param form AdminProjectCreateForm
      * @return project 作成した企画
      */
-    public Project createProject(Project project) {
+    public Project createProject(AdminProjectCreateForm form) {
+        Project project = new Project();
+        project.setName(form.getName());
+        project.setUrlKey(form.getUrlKey());
+        project.setIntroduction(form.getIntroduction());
+        project.setThemeColor(form.getThemeColor());
+        project.setProjectStartAt(form.getProjectStartAt());
+        project.setProjectEndAt(form.getProjectEndAt());
+        project.setSubmissionStartAt(form.getSubmissionStartAt());
+        project.setSubmissionEndAt(form.getSubmissionEndAt());
+        project.setVotingStartAt(form.getVotingStartAt());
+        project.setVotingEndAt(form.getVotingEndAt());
+        project.setMainImgUrl(null);
         project.setStatus(ProjectStatus.valueOf("BEFORE_SUBMISSION"));
         project.setPublished(false);
         project.setCreatedAt(LocalDateTime.now());
@@ -161,5 +174,37 @@ public class ProjectService {
      */
     public boolean updateProject(Project project){
         return projectRepository.updateProject(project);
+    }
+
+    public void updateImageUrl(String urlText, long id){
+        projectRepository.updateImageUrl(urlText, id);
+    }
+
+    public void updateStatus(ProjectStatus status, String urlKey){
+        projectRepository.updateStatus(status, urlKey);
+    }
+
+    public void nextStatus(String urlKey){
+        Project project = getProjectByUrlKey(urlKey);
+        ProjectStatus projectStatus = project.getStatus();
+        switch (project.getStatus()){
+            case BEFORE_SUBMISSION:
+                projectStatus = ProjectStatus.DURING_SUBMISSION;
+                break;
+            case DURING_SUBMISSION:
+                projectStatus = ProjectStatus.FIRST_PHASE;
+                break;
+            case FIRST_PHASE:
+                projectStatus = ProjectStatus.SECOND_PHASE_VOTING;
+            case SECOND_PHASE_VOTING:
+                projectStatus = ProjectStatus.SECOND_PHASE_VERIFY;
+                break;
+            case SECOND_PHASE_VERIFY:
+                projectStatus = ProjectStatus.SECOND_PHASE_RESULT;
+                break;
+            case SECOND_PHASE_RESULT:
+                projectStatus = ProjectStatus.AWARD_ANNOUNCEMENT;
+        }
+        updateStatus(projectStatus, urlKey);
     }
 }

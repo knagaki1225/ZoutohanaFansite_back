@@ -12,6 +12,7 @@ import com.example.zoutohanafansite.entity.post.Post;
 import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.entity.admin.review.ReviewCard;
 import com.example.zoutohanafansite.entity.review.Review;
+import com.example.zoutohanafansite.entity.validator.ProjectValidator;
 import com.example.zoutohanafansite.security.CustomAdminUserDetails;
 import com.example.zoutohanafansite.service.*;
 import org.apache.ibatis.type.TypeReference;
@@ -43,9 +44,11 @@ public class AdminController {
     private final GenreService genreService;
     private final ReviewGenreService reviewGenreService;
     private final ObjectMapper objectMapper;
+    private final ImageService imageService;
     private final NominatedReviewService nominatedReviewService;
+    private final ValidationService validationService;
 
-    public AdminController(ProjectService projectService, UserService userService, ReviewService reviewService, NotificationTemplateService notificationTemplateService, NotificationService notificationService, PostService postService, GenreService genreService, ReviewGenreService reviewGenreService, ObjectMapper objectMapper, NominatedReviewService nominatedReviewService) {
+    public AdminController(ProjectService projectService, UserService userService, ReviewService reviewService, NotificationTemplateService notificationTemplateService, NotificationService notificationService, PostService postService, GenreService genreService, ReviewGenreService reviewGenreService, ObjectMapper objectMapper, NominatedReviewService nominatedReviewService, ImageService imageService, ValidationService validationService) {
         this.projectService = projectService;
         this.userService = userService;
         this.reviewService = reviewService;
@@ -55,7 +58,9 @@ public class AdminController {
         this.genreService = genreService;
         this.reviewGenreService = reviewGenreService;
         this.objectMapper = objectMapper;
+        this.imageService = imageService;
         this.nominatedReviewService = nominatedReviewService;
+        this.validationService = validationService;
     }
 
     @GetMapping("/dash")
@@ -101,14 +106,42 @@ public class AdminController {
     }
 
     @GetMapping("/project/create")
-    public String createProject(){
+    public String createProject(Model model){
+        if(model.containsAttribute("form")){
+            return "admin/project_create";
+        }
+        AdminProjectCreateForm form = new AdminProjectCreateForm();
+        model.addAttribute("form", form);
         return "admin/project_create";
     }
 
     @PostMapping("/project/create")
-    public String createProject(Project project) {
-        Project createdProject = projectService.createProject(project);
-        return "redirect:/admin/project/view?urlKey=" + createdProject.getUrlKey();
+    public String createProject(AdminProjectCreateForm form, RedirectAttributes redirectAttributes) {
+        ProjectValidator projectValidator = validationService.validateProject(form);
+        if (projectValidator.isValid()) {
+            redirectAttributes.addFlashAttribute("projectValidator", projectValidator);
+            redirectAttributes.addFlashAttribute("form", form);
+            return "redirect:/admin/project/create";
+        }
+        Project createdProject = projectService.createProject(form);
+        redirectAttributes.addFlashAttribute("id", createdProject.getId());
+        return "redirect:/admin/project/create/image";
+    }
+
+    @GetMapping("/project/create/image")
+    public String createProjectImage(Model model, @ModelAttribute("id") Long id){
+        AdminCreateProjectImageForm form = new AdminCreateProjectImageForm();
+        form.setId(id);
+        model.addAttribute("form", form);
+        return "admin/project_create_image";
+    }
+
+    @PostMapping("/project/create/image")
+    public String insertImage(AdminCreateProjectImageForm form) throws IOException {
+        String fileName = imageService.saveImage(form.getImage());
+        projectService.updateImageUrl(fileName, form.getId());
+        Project project =  projectService.getProjectById(form.getId());
+        return "redirect:/admin/project/view?id=" + project.getUrlKey();
     }
 
     @GetMapping("/project/list")
@@ -142,14 +175,30 @@ public class AdminController {
 
         List<NominatedReviewCard> nominatedReviews = nominatedReviewService.getNominatedReviewCardByProjectId(project.getId());
         List<NominatedReviewCard> awardedReviews = nominatedReviewService.getAwardedReviewCardByProjectId(project.getId());
-        model.addAttribute("project", project);
+        model.addAttribute("project", form);
+        model.addAttribute("fileName", project.getMainImgUrl());
         model.addAttribute("nominatedReviews", nominatedReviews);
         model.addAttribute("awardedReviews", awardedReviews);
         return "admin/project_edit";
     }
 
-    @PostMapping("/project/view")
-    public String projectUpdate(Project project) {
+    @PostMapping("/project/view/{urlKey}")
+    public String projectUpdate(AdminProjectEditForm form, @PathVariable String urlKey) {
+        Project project =  projectService.getProjectByUrlKey(urlKey);
+        project.setName(form.getName());
+        if(!form.getUrlKey().equals(urlKey) && projectService.getProjectByUrlKey(form.getUrlKey()) != null){
+            return "redirect:/admin/project/view?error&urlKey=" + urlKey;
+        }
+        project.setUrlKey(form.getUrlKey());
+        project.setIntroduction(form.getIntroduction());
+        project.setThemeColor(form.getThemeColor());
+        project.setProjectStartAt(form.getProjectStartAt());
+        project.setProjectEndAt(form.getProjectEndAt());
+        project.setSubmissionStartAt(form.getSubmissionStartAt());
+        project.setSubmissionEndAt(form.getSubmissionEndAt());
+        project.setVotingStartAt(form.getVotingStartAt());
+        project.setVotingEndAt(form.getVotingEndAt());
+
         projectService.updateProject(project);
         return "redirect:/admin/project/view?urlKey=" + project.getUrlKey();
     }

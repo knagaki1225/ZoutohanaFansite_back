@@ -1,6 +1,7 @@
 package com.example.zoutohanafansite.repository;
 
 import com.example.zoutohanafansite.entity.admin.project.ProjectCard;
+import com.example.zoutohanafansite.entity.enums.ProjectStatus;
 import com.example.zoutohanafansite.entity.form.ProjectSearchForm;
 import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.mapper.ProjectMapper;
@@ -59,5 +60,13 @@ public class ProjectRepository {
 
     public void createProject(Project project) {
         projectMapper.createProject(project);
+    }
+
+    public void updateImageUrl(String urlText, long id){
+        projectMapper.updateImageUrl(urlText, id);
+    }
+
+    public void updateStatus(ProjectStatus status, String urlKey){
+        projectMapper.updateStatus(status, urlKey);
     }
 }

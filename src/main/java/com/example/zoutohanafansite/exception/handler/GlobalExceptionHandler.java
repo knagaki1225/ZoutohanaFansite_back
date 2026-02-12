@@ -2,6 +2,7 @@ package com.example.zoutohanafansite.exception.handler;
 
 import com.example.zoutohanafansite.entity.auth.ErrorStatus;
 import com.example.zoutohanafansite.exception.AccessDeniedException;
+import com.example.zoutohanafansite.exception.AdminUserNotFoundException;
 import com.example.zoutohanafansite.exception.IllegalStateException;
 import com.example.zoutohanafansite.exception.ProjectNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -61,5 +62,10 @@ public class GlobalExceptionHandler {
         ErrorStatus errorStatus = new ErrorStatus("FORBIDDEN", "エラーが発生しました。最初からやり直してください。");
         redirectAttributes.addFlashAttribute("errorStatus", errorStatus);
         return "redirect:/error-4xx";
+    }
+
+    @ExceptionHandler(AdminUserNotFoundException.class)
+    public String handleAdminUserNotFound(AdminUserNotFoundException ex){
+        return "redirect:/admin/login?error";
     }
 }
