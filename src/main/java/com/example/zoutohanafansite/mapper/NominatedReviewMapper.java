@@ -119,8 +119,10 @@ public interface NominatedReviewMapper {
     FROM nominated_reviews nr
     JOIN users u ON nr.user_id = u.id
     WHERE nr.project_id = #{projectId}
+      AND nr.review_awarded = false
         AND nr.deleted = false
-""")
+    ORDER BY nr.review_vote_count DESC
+    """)
     List<NominatedReviewCard> selectNominatedReviewCardByProjectId(long projectId);
 
 
@@ -133,7 +135,8 @@ public interface NominatedReviewMapper {
     WHERE nr.project_id = #{projectId}
         AND nr.review_awarded = true
         AND nr.deleted = false
-""")
+    ORDER BY nr.review_vote_count DESC
+    """)
     List<NominatedReviewCard> selectAwardedReviewCardByProjectId(long projectId);
 
 }

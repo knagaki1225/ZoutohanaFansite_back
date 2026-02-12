@@ -233,7 +233,11 @@ public class AdminController {
     }
 
     @GetMapping("/review/print")
-    public String reviewPrint() {
+    public String reviewPrint(@RequestParam long id, Model model) {
+        ReviewCard reviewCard = reviewService.getReviewCardById(id);
+        List<Genre> thisReviewGenres = reviewGenreService.getGenresByReviewId(id);
+        model.addAttribute("review", reviewCard);
+        model.addAttribute("thisReviewGenres", thisReviewGenres);
         return "admin/review_print";
     }
 
