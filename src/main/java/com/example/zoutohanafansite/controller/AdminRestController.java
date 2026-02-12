@@ -5,9 +5,11 @@ import com.example.zoutohanafansite.entity.admin.notification.NotificationTempla
 import com.example.zoutohanafansite.entity.admin.notification.NotificationTemplateList;
 import com.example.zoutohanafansite.entity.form.AdminProjectCreateForm;
 import com.example.zoutohanafansite.entity.notificationtemplate.NotificationTemplate;
+import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.security.CustomAdminUserDetails;
 import com.example.zoutohanafansite.service.NotificationService;
 import com.example.zoutohanafansite.service.NotificationTemplateService;
+import com.example.zoutohanafansite.service.ProjectService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +22,12 @@ import java.util.List;
 public class AdminRestController {
     private final NotificationTemplateService notificationTemplateService;
     private final NotificationService notificationService;
+    private final ProjectService projectService;
 
-    public AdminRestController(NotificationTemplateService notificationTemplateService, NotificationService notificationService) {
+    public AdminRestController(NotificationTemplateService notificationTemplateService, NotificationService notificationService, ProjectService projectService) {
         this.notificationTemplateService = notificationTemplateService;
         this.notificationService = notificationService;
+        this.projectService = projectService;
     }
 
     @GetMapping("/notification/template/list")
@@ -57,6 +61,12 @@ public class AdminRestController {
 
     @PostMapping("/project/new")
     public ResponseEntity<Void> createProject(@ModelAttribute AdminProjectCreateForm adminProjectCreateForm){
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/project/status/next/{urlKey}")
+    public ResponseEntity<Void> nextStatusProject(@PathVariable String urlKey){
+        projectService.nextStatus(urlKey);
         return ResponseEntity.ok().build();
     }
 }
