@@ -1,6 +1,7 @@
 package com.example.zoutohanafansite.service;
 
 import com.example.zoutohanafansite.entity.admin.project.ProjectCard;
+import com.example.zoutohanafansite.entity.enums.ProjectStatus;
 import com.example.zoutohanafansite.entity.form.ProjectSearchForm;
 import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.repository.ProjectRepository;
@@ -16,6 +17,21 @@ public class ProjectService {
 
     public ProjectService(ProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
+    }
+
+    /**
+     * 企画を作成
+     *
+     * @param project 作成する企画の内容
+     * @return project 作成した企画
+     */
+    public Project createProject(Project project) {
+        project.setStatus(ProjectStatus.valueOf("BEFORE_SUBMISSION"));
+        project.setPublished(false);
+        project.setCreatedAt(LocalDateTime.now());
+        project.setUpdatedAt(LocalDateTime.now());
+        projectRepository.createProject(project);
+        return project;
     }
 
     /**

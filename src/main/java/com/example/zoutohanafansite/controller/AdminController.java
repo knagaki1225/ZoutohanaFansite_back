@@ -91,6 +91,17 @@ public class AdminController {
         return "redirect:/admin/account/view?loginId=" + user.getLoginId();
     }
 
+    @GetMapping("/project/create")
+    public String createProject(){
+        return "admin/project_create";
+    }
+
+    @PostMapping("/project/create")
+    public String createProject(Project project) {
+        Project createdProject = projectService.createProject(project);
+        return "redirect:/admin/project/view?urlKey=" + createdProject.getUrlKey();
+    }
+
     @GetMapping("/project/list")
     public String projectList(ProjectSearchForm form, Model model) {
         List<ProjectCard> projects = projectService.getAllProjects(form);
