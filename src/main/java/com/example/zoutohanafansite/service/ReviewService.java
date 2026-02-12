@@ -307,5 +307,55 @@ public class ReviewService {
                 throw new IllegalArgumentException("Unknown status: " + status);
         }
     }
+
+    /**
+     * 指定したurlKeyのprojectに属するreviewを全件取得(CSVエクスポート用)
+     *
+     * @param urlKey 指定するurlKey
+     * @return List<ReviewCard>
+     */
+    public List<ReviewCard> selectReviewCardForExport(String urlKey){
+        return reviewRepository.selectReviewCardForExport(urlKey);
+    }
+
+    /**
+     * 書評一覧をCSV形式に
+     */
+    public String generateCsv(List<ReviewCard> reviews) {
+        StringBuilder sb = new StringBuilder();
+
+        // ヘッダー
+        sb.append("投稿日時,ステータス,書評ID,書評タイトル,書評本文,得票数,ISBN,書籍タイトル,出版社,著者,投稿者のログインID,投稿者名,投稿者の住所,投稿者の年代,投稿者の性別,投稿者の自己紹介\n");
+
+        for (ReviewCard r : reviews) {
+            sb.append(r.getCreatedAt()).append(",");
+            sb.append(r.getStatus()).append(",");
+            sb.append(r.getId()).append(",");
+            sb.append(escape(r.getReviewTitle())).append(",");
+            sb.append(escape(r.getReviewContent())).append(",");
+            sb.append(escape(String.valueOf(r.getVoteCount()))).append(",");
+            sb.append(escape(String.valueOf(r.getBookIsbn()))).append(",");
+            sb.append(escape(r.getBookTitle())).append(",");
+            sb.append(escape(r.getBookPublisher())).append(",");
+            sb.append(escape(r.getBookAuthor())).append(",");
+            sb.append(r.getUserLoginId()).append(",");
+            sb.append(escape(r.getUserNickname())).append(",");
+            sb.append(escape(r.getUserAddress())).append(",");
+            sb.append(escape(String.valueOf(r.getUserAgeGroup()))).append(",");
+            sb.append(escape(r.getUserGender().getLabel())).append(",");
+            sb.append(escape(r.getUserSelfIntroduction())).append("\n");
+        }
+
+        return sb.toString();
+    }
+
+    // CSVエスケープ（改行・カンマ・ダブルクォート対応）
+    private String escape(String s) {
+        if (s == null) return "";
+        return "\"" + s.replace("\"", "\"\"")
+                .replace("\n", " ")
+                .replace("\r", "") + "\"";
+    }
+
 }
 

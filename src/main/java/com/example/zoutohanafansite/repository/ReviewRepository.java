@@ -82,4 +82,8 @@ public class ReviewRepository {
     public void updateFirstStagePassed(List<Long> ids, boolean passed) {
         reviewMapper.updateFirstStagePassed(ids, passed);
     }
+
+    public List<ReviewCard> selectReviewCardForExport(String urlKey) {
+        return reviewMapper.selectReviewCardForExport(urlKey);
+    }
 }
