@@ -56,4 +56,8 @@ public class ProjectRepository {
     public boolean updateProject(Project project) {
         return projectMapper.updateProject(project);
     }
+
+    public void createProject(Project project) {
+        projectMapper.createProject(project);
+    }
 }

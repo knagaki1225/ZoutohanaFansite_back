@@ -2,11 +2,9 @@ package com.example.zoutohanafansite.mapper;
 
 import com.example.zoutohanafansite.entity.admin.project.ProjectCard;
 import com.example.zoutohanafansite.entity.form.ProjectSearchForm;
+import com.example.zoutohanafansite.entity.post.Post;
 import com.example.zoutohanafansite.entity.project.Project;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,8 +20,7 @@ public interface ProjectMapper {
 
     @Select("""
             SELECT * FROM projects
-                WHERE published = true
-                    AND url_key = #{urlKey}
+                WHERE url_key = #{urlKey}
                     AND deleted = false
     """)
     Project getProjectByUrlKey(String urlKey);
@@ -104,4 +101,48 @@ public interface ProjectMapper {
         WHERE id = #{project.id}
     """)
     boolean updateProject(@Param("project") Project project);
+
+    @Insert("""
+        INSERT INTO projects (
+            name,
+            url_key,
+            introduction,
+            main_img_url,
+            theme_color,
+            status,
+            enable_visible_book_title,
+            enable_visible_review_title,
+            enable_visible_user_info,
+            published,
+            project_start_at,
+            project_end_at,
+            submission_start_at,
+            submission_end_at,
+            voting_start_at,
+            voting_end_at,
+            created_at,
+            updated_at
+        ) VALUES (
+            #{name},
+            #{urlKey},
+            #{introduction},
+            #{mainImgUrl},
+            #{themeColor},
+            #{status},
+            #{enableVisibleBookTitle},
+            #{enableVisibleReviewTitle},
+            #{enableVisibleUserInfo},
+            #{published},
+            #{projectStartAt},
+            #{projectEndAt},
+            #{submissionStartAt},
+            #{submissionEndAt},
+            #{votingStartAt},
+            #{votingEndAt},
+            #{createdAt},
+            #{updatedAt}
+        )
+    """)
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
+    void createProject(Project project);
 }
