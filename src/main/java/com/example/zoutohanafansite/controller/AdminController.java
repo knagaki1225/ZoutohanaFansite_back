@@ -12,6 +12,7 @@ import com.example.zoutohanafansite.entity.post.Post;
 import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.entity.admin.review.ReviewCard;
 import com.example.zoutohanafansite.entity.review.Review;
+import com.example.zoutohanafansite.entity.validator.ProjectValidator;
 import com.example.zoutohanafansite.security.CustomAdminUserDetails;
 import com.example.zoutohanafansite.service.*;
 import org.apache.ibatis.type.TypeReference;
@@ -45,8 +46,9 @@ public class AdminController {
     private final ObjectMapper objectMapper;
     private final ImageService imageService;
     private final NominatedReviewService nominatedReviewService;
+    private final ValidationService validationService;
 
-    public AdminController(ProjectService projectService, UserService userService, ReviewService reviewService, NotificationTemplateService notificationTemplateService, NotificationService notificationService, PostService postService, GenreService genreService, ReviewGenreService reviewGenreService, ObjectMapper objectMapper, NominatedReviewService nominatedReviewService) {
+    public AdminController(ProjectService projectService, UserService userService, ReviewService reviewService, NotificationTemplateService notificationTemplateService, NotificationService notificationService, PostService postService, GenreService genreService, ReviewGenreService reviewGenreService, ObjectMapper objectMapper, NominatedReviewService nominatedReviewService, ImageService imageService, ValidationService validationService) {
         this.projectService = projectService;
         this.userService = userService;
         this.reviewService = reviewService;
@@ -58,6 +60,7 @@ public class AdminController {
         this.objectMapper = objectMapper;
         this.imageService = imageService;
         this.nominatedReviewService = nominatedReviewService;
+        this.validationService = validationService;
     }
 
     @GetMapping("/dash")
@@ -104,14 +107,22 @@ public class AdminController {
 
     @GetMapping("/project/create")
     public String createProject(Model model){
+        if(model.containsAttribute("form")){
+            return "admin/project_create";
+        }
         AdminProjectCreateForm form = new AdminProjectCreateForm();
         model.addAttribute("form", form);
-//        return "sample";
         return "admin/project_create";
     }
 
     @PostMapping("/project/create")
     public String createProject(AdminProjectCreateForm form, RedirectAttributes redirectAttributes) {
+        ProjectValidator projectValidator = validationService.validateProject(form);
+        if (projectValidator.isValid()) {
+            redirectAttributes.addFlashAttribute("projectValidator", projectValidator);
+            redirectAttributes.addFlashAttribute("form", form);
+            return "redirect:/admin/project/create";
+        }
         Project createdProject = projectService.createProject(form);
         redirectAttributes.addFlashAttribute("id", createdProject.getId());
         return "redirect:/admin/project/create/image";
@@ -147,16 +158,46 @@ public class AdminController {
             return "redirect:/admin/project/list";
         }
         Project project = projectService.getProjectByUrlKey(urlKey);
+        AdminProjectEditForm form = new AdminProjectEditForm();
+        form.setPublished(project.isPublished());
+        form.setStatus(project.getStatus());
+        form.setName(project.getName());
+        form.setUrlKey(project.getUrlKey());
+        form.setIntroduction(project.getIntroduction());
+        form.setThemeColor(project.getThemeColor());
+        form.setProjectStartAt(project.getProjectStartAt());
+        form.setProjectEndAt(project.getProjectEndAt());
+        form.setSubmissionStartAt(project.getSubmissionStartAt());
+        form.setSubmissionEndAt(project.getSubmissionEndAt());
+        form.setVotingStartAt(project.getVotingStartAt());
+        form.setVotingEndAt(project.getVotingEndAt());
+
         List<NominatedReviewCard> nominatedReviews = nominatedReviewService.getNominatedReviewCardByProjectId(project.getId());
         List<NominatedReviewCard> awardedReviews = nominatedReviewService.getAwardedReviewCardByProjectId(project.getId());
-        model.addAttribute("project", project);
+        model.addAttribute("project", form);
+        model.addAttribute("fileName", project.getMainImgUrl());
         model.addAttribute("nominatedReviews", nominatedReviews);
         model.addAttribute("awardedReviews", awardedReviews);
         return "admin/project_edit";
     }
 
-    @PostMapping("/project/view")
-    public String projectUpdate(Project project) {
+    @PostMapping("/project/view/{urlKey}")
+    public String projectUpdate(AdminProjectEditForm form, @PathVariable String urlKey) {
+        Project project =  projectService.getProjectByUrlKey(urlKey);
+        project.setName(form.getName());
+        if(!form.getUrlKey().equals(urlKey) && projectService.getProjectByUrlKey(form.getUrlKey()) != null){
+            return "redirect:/admin/project/view?error&urlKey=" + urlKey;
+        }
+        project.setUrlKey(form.getUrlKey());
+        project.setIntroduction(form.getIntroduction());
+        project.setThemeColor(form.getThemeColor());
+        project.setProjectStartAt(form.getProjectStartAt());
+        project.setProjectEndAt(form.getProjectEndAt());
+        project.setSubmissionStartAt(form.getSubmissionStartAt());
+        project.setSubmissionEndAt(form.getSubmissionEndAt());
+        project.setVotingStartAt(form.getVotingStartAt());
+        project.setVotingEndAt(form.getVotingEndAt());
+
         projectService.updateProject(project);
         return "redirect:/admin/project/view?urlKey=" + project.getUrlKey();
     }
