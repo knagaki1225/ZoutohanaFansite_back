@@ -21,18 +21,18 @@ public class ValidationService {
     public SignupValidator validateSignUp(SignupForm signupForm) {
         SignupValidator signupValidator = new SignupValidator();
 
-        if(isNull(signupForm.getLoginId())){
+        if(signupForm.getLoginId().isEmpty()){
             signupValidator.setNullLoginId(true);
         }else{
             if(userRepository.getUserByLoginId(signupForm.getLoginId()) != null){
                 signupValidator.setExistsLoginId(true);
             }
         }
-        signupValidator.setNullNickName(isNull(signupForm.getNickname()));
-        signupValidator.setNullAddress(isNull(signupForm.getAddress()));
+        signupValidator.setNullNickName(signupForm.getNickname().isEmpty());
+        signupValidator.setNullAddress(signupForm.getAddress().isEmpty());
         signupValidator.setNullBirthYear(isNull(signupForm.getBirthYear()));
-        signupValidator.setNullPassword(isNull(signupForm.getPassword()));
-        signupValidator.setNullConfirmPassword(isNull(signupForm.getConfirmPassword()));
+        signupValidator.setNullPassword(signupForm.getPassword().isEmpty());
+        signupValidator.setNullConfirmPassword(signupForm.getConfirmPassword().isEmpty());
 
         if(!signupForm.getPassword().equals(signupForm.getConfirmPassword())){
             signupValidator.setPasswordMismatch(true);

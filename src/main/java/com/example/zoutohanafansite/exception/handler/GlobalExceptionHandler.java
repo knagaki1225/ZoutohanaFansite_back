@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
                 status = "FORBIDDEN";
                 message = "権限がありません。ログインをしてください。";
             } else if (code.is4xxClientError()) { // その他400系
-                message = "エラーはが発生しました。";
+                message = "エラーが発生しました。";
                 status = "EXCEPTION";
             }
         }
@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
 
         return redirectPath;
     }
-  
+
     @ExceptionHandler(AccessDeniedException.class)
     public String handleAccessDeniedException(AccessDeniedException ex, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         ErrorStatus errorStatus = new ErrorStatus("FORBIDDEN", "アクセスする権限がありません");
