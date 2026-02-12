@@ -145,4 +145,11 @@ public interface ProjectMapper {
     """)
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     void createProject(Project project);
+
+    @Update("""
+        UPDATE projects
+        SET main_img_url = #{urlText}
+        WHERE id = #{id}
+    """)
+    void updateImageUrl(String urlText, long id);
 }

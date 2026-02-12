@@ -3,6 +3,7 @@ package com.example.zoutohanafansite.controller;
 import com.example.zoutohanafansite.entity.admin.notification.NotificationSend;
 import com.example.zoutohanafansite.entity.admin.notification.NotificationTemplateContent;
 import com.example.zoutohanafansite.entity.admin.notification.NotificationTemplateList;
+import com.example.zoutohanafansite.entity.form.AdminProjectCreateForm;
 import com.example.zoutohanafansite.entity.notificationtemplate.NotificationTemplate;
 import com.example.zoutohanafansite.security.CustomAdminUserDetails;
 import com.example.zoutohanafansite.service.NotificationService;
@@ -51,6 +52,11 @@ public class AdminRestController {
     @PostMapping("/notification/send")
     public ResponseEntity<Void> sendNotification(@RequestBody NotificationSend notificationSend, @AuthenticationPrincipal CustomAdminUserDetails user){
         notificationService.insertBulkNotification(notificationSend, user.getUserId());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/project/new")
+    public ResponseEntity<Void> createProject(@ModelAttribute AdminProjectCreateForm adminProjectCreateForm){
         return ResponseEntity.ok().build();
     }
 }
