@@ -43,6 +43,7 @@ public class AdminController {
     private final GenreService genreService;
     private final ReviewGenreService reviewGenreService;
     private final ObjectMapper objectMapper;
+    private final ImageService imageService;
     private final NominatedReviewService nominatedReviewService;
 
     public AdminController(ProjectService projectService, UserService userService, ReviewService reviewService, NotificationTemplateService notificationTemplateService, NotificationService notificationService, PostService postService, GenreService genreService, ReviewGenreService reviewGenreService, ObjectMapper objectMapper, NominatedReviewService nominatedReviewService) {
@@ -55,6 +56,7 @@ public class AdminController {
         this.genreService = genreService;
         this.reviewGenreService = reviewGenreService;
         this.objectMapper = objectMapper;
+        this.imageService = imageService;
         this.nominatedReviewService = nominatedReviewService;
     }
 
@@ -101,14 +103,34 @@ public class AdminController {
     }
 
     @GetMapping("/project/create")
-    public String createProject(){
+    public String createProject(Model model){
+        AdminProjectCreateForm form = new AdminProjectCreateForm();
+        model.addAttribute("form", form);
+//        return "sample";
         return "admin/project_create";
     }
 
     @PostMapping("/project/create")
-    public String createProject(Project project) {
-        Project createdProject = projectService.createProject(project);
-        return "redirect:/admin/project/view?urlKey=" + createdProject.getUrlKey();
+    public String createProject(AdminProjectCreateForm form, RedirectAttributes redirectAttributes) {
+        Project createdProject = projectService.createProject(form);
+        redirectAttributes.addFlashAttribute("id", createdProject.getId());
+        return "redirect:/admin/project/create/image";
+    }
+
+    @GetMapping("/project/create/image")
+    public String createProjectImage(Model model, @ModelAttribute("id") Long id){
+        AdminCreateProjectImageForm form = new AdminCreateProjectImageForm();
+        form.setId(id);
+        model.addAttribute("form", form);
+        return "admin/project_create_image";
+    }
+
+    @PostMapping("/project/create/image")
+    public String insertImage(AdminCreateProjectImageForm form) throws IOException {
+        String fileName = imageService.saveImage(form.getImage());
+        projectService.updateImageUrl(fileName, form.getId());
+        Project project =  projectService.getProjectById(form.getId());
+        return "redirect:/admin/project/view?id=" + project.getUrlKey();
     }
 
     @GetMapping("/project/list")

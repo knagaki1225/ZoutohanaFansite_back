@@ -60,4 +60,8 @@ public class ProjectRepository {
     public void createProject(Project project) {
         projectMapper.createProject(project);
     }
+
+    public void updateImageUrl(String urlText, long id){
+        projectMapper.updateImageUrl(urlText, id);
+    }
 }
