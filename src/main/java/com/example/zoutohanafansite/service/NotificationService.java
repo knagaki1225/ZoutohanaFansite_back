@@ -1,7 +1,9 @@
 package com.example.zoutohanafansite.service;
 
+import com.example.zoutohanafansite.entity.admin.notification.NotificationSend;
 import com.example.zoutohanafansite.entity.auth.User;
 import com.example.zoutohanafansite.entity.form.AdminNotificationSendForm;
+import com.example.zoutohanafansite.entity.nominatedreview.NominatedReview;
 import com.example.zoutohanafansite.entity.notification.Notification;
 import com.example.zoutohanafansite.entity.notification.NotificationList;
 import com.example.zoutohanafansite.entity.project.Project;
@@ -19,12 +21,14 @@ public class NotificationService {
     private final ReviewService reviewService;
     private final ProjectService projectService;
     private final UserService userService;
+    private final NominatedReviewService nominatedReviewService;
 
-    public NotificationService(NotificationRepository notificationRepository, ReviewService reviewService, ProjectService projectService, UserService userService) {
+    public NotificationService(NotificationRepository notificationRepository, ReviewService reviewService, ProjectService projectService, UserService userService, NominatedReviewService nominatedReviewService) {
         this.notificationRepository = notificationRepository;
         this.reviewService = reviewService;
         this.projectService = projectService;
         this.userService = userService;
+        this.nominatedReviewService = nominatedReviewService;
     }
 
     /**
@@ -88,6 +92,28 @@ public class NotificationService {
 
     public void updateNotificationSeen(long id){
         notificationRepository.updateNotificationSeen(id);
+    }
+
+    public void insertBulkNotification(NotificationSend notificationSend, long adminId){
+        Project project = projectService.getProjectByUrlKey(notificationSend.getUrlKey());
+        if(notificationSend.getRecipient() == 1){
+            List<Review> reviews = reviewService.selectReviewsByUrlKey(notificationSend.getUrlKey());
+            for(Review review : reviews){
+                AdminNotificationSendForm form = new AdminNotificationSendForm();
+                form.setTitle(notificationSend.getTitle());
+                form.setContent(notificationSend.getMessage());
+
+                insertNotificationByForm(form, review.getId(), adminId);
+            }
+        }else{
+             List<NominatedReview> reviews = nominatedReviewService.getByProjectId(project.getId());
+             for(NominatedReview nominatedReview : reviews){
+                 AdminNotificationSendForm form = new AdminNotificationSendForm();
+                 form.setTitle(notificationSend.getTitle());
+                 form.setContent(notificationSend.getMessage());
+                 insertNotificationByForm(form, nominatedReview.getId(), adminId);
+             }
+        }
     }
 
 }
