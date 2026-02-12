@@ -179,4 +179,32 @@ public class ProjectService {
     public void updateImageUrl(String urlText, long id){
         projectRepository.updateImageUrl(urlText, id);
     }
+
+    public void updateStatus(ProjectStatus status, String urlKey){
+        projectRepository.updateStatus(status, urlKey);
+    }
+
+    public void nextStatus(String urlKey){
+        Project project = getProjectByUrlKey(urlKey);
+        ProjectStatus projectStatus = project.getStatus();
+        switch (project.getStatus()){
+            case BEFORE_SUBMISSION:
+                projectStatus = ProjectStatus.DURING_SUBMISSION;
+                break;
+            case DURING_SUBMISSION:
+                projectStatus = ProjectStatus.FIRST_PHASE;
+                break;
+            case FIRST_PHASE:
+                projectStatus = ProjectStatus.SECOND_PHASE_VOTING;
+            case SECOND_PHASE_VOTING:
+                projectStatus = ProjectStatus.SECOND_PHASE_VERIFY;
+                break;
+            case SECOND_PHASE_VERIFY:
+                projectStatus = ProjectStatus.SECOND_PHASE_RESULT;
+                break;
+            case SECOND_PHASE_RESULT:
+                projectStatus = ProjectStatus.AWARD_ANNOUNCEMENT;
+        }
+        updateStatus(projectStatus, urlKey);
+    }
 }
