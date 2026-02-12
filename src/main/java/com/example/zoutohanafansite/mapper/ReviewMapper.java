@@ -195,9 +195,6 @@ public interface ReviewMapper {
     """)
     List<Review> selectReviewByUrlKeyAndIdList(String urlKey, List<Long> idList);
 
-    @Select("SELECT * FROM nominated_reviews WHERE project_id = #{projectId} AND deleted = false")
-    List<NominatedReviewCard> selectNominatedReviewCardByProjectId(long projectId);
-
     @Update("""
         <script>
             UPDATE reviews

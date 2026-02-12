@@ -75,10 +75,6 @@ public class ReviewRepository {
         return reviewMapper.selectReviewByUrlKeyAndIdList(urlKey, idList);
     }
 
-    public List<NominatedReviewCard> selectNominatedReviewCardByProjectId(long projectId) {
-        return reviewMapper.selectNominatedReviewCardByProjectId(projectId);
-    }
-
     public List<ReviewList> getReviewsByUrlKey(ReviewSearchForm form, String urlKey) {
         return reviewMapper.getReviewsByUrlKey(form, urlKey);
     }

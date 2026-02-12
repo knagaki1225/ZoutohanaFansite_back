@@ -36,8 +36,9 @@ public class AdminController {
     private final GenreService genreService;
     private final ReviewGenreService reviewGenreService;
     private final ObjectMapper objectMapper;
+    private final NominatedReviewService nominatedReviewService;
 
-    public AdminController(ProjectService projectService, UserService userService, ReviewService reviewService, NotificationTemplateService notificationTemplateService, NotificationService notificationService, PostService postService, GenreService genreService, ReviewGenreService reviewGenreService, ObjectMapper objectMapper) {
+    public AdminController(ProjectService projectService, UserService userService, ReviewService reviewService, NotificationTemplateService notificationTemplateService, NotificationService notificationService, PostService postService, GenreService genreService, ReviewGenreService reviewGenreService, ObjectMapper objectMapper, NominatedReviewService nominatedReviewService) {
         this.projectService = projectService;
         this.userService = userService;
         this.reviewService = reviewService;
@@ -47,6 +48,7 @@ public class AdminController {
         this.genreService = genreService;
         this.reviewGenreService = reviewGenreService;
         this.objectMapper = objectMapper;
+        this.nominatedReviewService = nominatedReviewService;
     }
 
     @GetMapping("/dash")
@@ -116,9 +118,11 @@ public class AdminController {
             return "redirect:/admin/project/list";
         }
         Project project = projectService.getProjectByUrlKey(urlKey);
-        List<NominatedReviewCard> reviews = reviewService.getNominatedReviewCardByProjectId(project.getId());
+        List<NominatedReviewCard> nominatedReviews = nominatedReviewService.getNominatedReviewCardByProjectId(project.getId());
+        List<NominatedReviewCard> awardedReviews = nominatedReviewService.getAwardedReviewCardByProjectId(project.getId());
         model.addAttribute("project", project);
-        model.addAttribute("reviews", reviews);
+        model.addAttribute("nominatedReviews", nominatedReviews);
+        model.addAttribute("awardedReviews", awardedReviews);
         return "admin/project_edit";
     }
 

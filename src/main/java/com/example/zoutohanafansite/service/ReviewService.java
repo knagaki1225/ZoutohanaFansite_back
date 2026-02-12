@@ -246,16 +246,6 @@ public class ReviewService {
     }
 
     /**
-     * 指定したidのprojectの、nominated_reviewsを全取得(企画編集・情報用)
-     *
-     * @param projectId
-     * @return NominatedReviewCard
-     */
-    public List<NominatedReviewCard> getNominatedReviewCardByProjectId(long projectId) {
-        return reviewRepository.selectNominatedReviewCardByProjectId(projectId);
-    }
-
-    /**
      * projectIdを指定してreviewを全件取得(管理者用)
      *
      * @oaram form ReviewSearchForm(検索条件)
