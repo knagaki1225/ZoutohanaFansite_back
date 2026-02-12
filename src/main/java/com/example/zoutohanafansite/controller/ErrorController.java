@@ -10,5 +10,4 @@ public class ErrorController {
     public String error4xx() {
         return "auth/404";
     }
-
 }
