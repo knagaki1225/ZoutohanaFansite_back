@@ -1,5 +1,6 @@
 package com.example.zoutohanafansite.service;
 
+import com.example.zoutohanafansite.entity.admin.review.NominatedReviewCard;
 import com.example.zoutohanafansite.entity.nominatedreview.NominatedReview;
 import com.example.zoutohanafansite.entity.nominatedreview.NominatedReviewWork;
 import com.example.zoutohanafansite.entity.review.Review;
@@ -21,7 +22,7 @@ public class NominatedReviewService {
         this.nominatedReviewRepository = nominatedReviewRepository;
         this.reviewService = reviewService;
     }
-    
+
     public List<NominatedReview> getByProjectId(long projectId){
         return nominatedReviewRepository.selectByProjectId(projectId);
     }
@@ -77,5 +78,25 @@ public class NominatedReviewService {
         }
 
         return reviewAwards;
+    }
+
+    /**
+     * 指定したidのprojectの、nominated_reviewsを全取得(企画編集・情報用)
+     *
+     * @param projectId
+     * @return List<NominatedReviewCard>
+     */
+    public List<NominatedReviewCard> getNominatedReviewCardByProjectId(long projectId) {
+        return nominatedReviewRepository.selectNominatedReviewCardByProjectId(projectId);
+    }
+
+    /**
+     * 指定したidのprojectの、nominated_reviewsの中でawardedがtrueの書評を全取得(企画編集・情報用)
+     *
+     * @param projectId
+     * @return List<NominatedReviewCard>
+     */
+    public List<NominatedReviewCard> getAwardedReviewCardByProjectId(long projectId) {
+        return nominatedReviewRepository.selectAwardedReviewCardByProjectId(projectId);
     }
 }

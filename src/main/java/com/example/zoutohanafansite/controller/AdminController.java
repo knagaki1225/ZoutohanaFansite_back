@@ -15,6 +15,9 @@ import com.example.zoutohanafansite.entity.review.Review;
 import com.example.zoutohanafansite.security.CustomAdminUserDetails;
 import com.example.zoutohanafansite.service.*;
 import org.apache.ibatis.type.TypeReference;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +25,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import tools.jackson.databind.ObjectMapper;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Controller
@@ -38,8 +44,9 @@ public class AdminController {
     private final ReviewGenreService reviewGenreService;
     private final ObjectMapper objectMapper;
     private final ImageService imageService;
+    private final NominatedReviewService nominatedReviewService;
 
-    public AdminController(ProjectService projectService, UserService userService, ReviewService reviewService, NotificationTemplateService notificationTemplateService, NotificationService notificationService, PostService postService, GenreService genreService, ReviewGenreService reviewGenreService, ObjectMapper objectMapper, ImageService imageService) {
+    public AdminController(ProjectService projectService, UserService userService, ReviewService reviewService, NotificationTemplateService notificationTemplateService, NotificationService notificationService, PostService postService, GenreService genreService, ReviewGenreService reviewGenreService, ObjectMapper objectMapper, NominatedReviewService nominatedReviewService) {
         this.projectService = projectService;
         this.userService = userService;
         this.reviewService = reviewService;
@@ -50,6 +57,7 @@ public class AdminController {
         this.reviewGenreService = reviewGenreService;
         this.objectMapper = objectMapper;
         this.imageService = imageService;
+        this.nominatedReviewService = nominatedReviewService;
     }
 
     @GetMapping("/dash")
@@ -139,9 +147,11 @@ public class AdminController {
             return "redirect:/admin/project/list";
         }
         Project project = projectService.getProjectByUrlKey(urlKey);
-        List<NominatedReviewCard> reviews = reviewService.getNominatedReviewCardByProjectId(project.getId());
+        List<NominatedReviewCard> nominatedReviews = nominatedReviewService.getNominatedReviewCardByProjectId(project.getId());
+        List<NominatedReviewCard> awardedReviews = nominatedReviewService.getAwardedReviewCardByProjectId(project.getId());
         model.addAttribute("project", project);
-        model.addAttribute("reviews", reviews);
+        model.addAttribute("nominatedReviews", nominatedReviews);
+        model.addAttribute("awardedReviews", awardedReviews);
         return "admin/project_edit";
     }
 
@@ -245,8 +255,35 @@ public class AdminController {
     }
 
     @GetMapping("/review/print")
-    public String reviewPrint() {
+    public String reviewPrint(@RequestParam long id, Model model) {
+        ReviewCard reviewCard = reviewService.getReviewCardById(id);
+        List<Genre> thisReviewGenres = reviewGenreService.getGenresByReviewId(id);
+        model.addAttribute("review", reviewCard);
+        model.addAttribute("thisReviewGenres", thisReviewGenres);
         return "admin/review_print";
+    }
+
+    @GetMapping("/review/export")
+    public ResponseEntity<byte[]> exportReviewsCsv(@RequestParam String urlKey) throws IOException {
+
+        List<ReviewCard> reviews = reviewService.selectReviewCardForExport(urlKey);
+        String csv = reviewService.generateCsv(reviews);
+
+        String fileName = "reviews_" + urlKey + ".csv";
+
+        // BOM追加（Excel文字化け防止）
+        byte[] bom = {(byte)0xEF, (byte)0xBB, (byte)0xBF};
+        byte[] csvBytes = csv.getBytes(StandardCharsets.UTF_8);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        out.write(bom);
+        out.write(csvBytes);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + URLEncoder.encode(fileName, StandardCharsets.UTF_8) + "\"")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(out.toByteArray());
     }
 
     @GetMapping("/genre/list")
