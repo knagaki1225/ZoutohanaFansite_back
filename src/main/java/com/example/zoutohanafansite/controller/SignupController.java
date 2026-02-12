@@ -1,10 +1,14 @@
 package com.example.zoutohanafansite.controller;
 
 import com.example.zoutohanafansite.entity.auth.User;
+import com.example.zoutohanafansite.entity.enums.ProjectStatus;
 import com.example.zoutohanafansite.entity.enums.UserStatus;
 import com.example.zoutohanafansite.entity.form.SignupForm;
+import com.example.zoutohanafansite.entity.project.Project;
 import com.example.zoutohanafansite.entity.validator.SignupValidator;
+import com.example.zoutohanafansite.exception.AccessDeniedException;
 import com.example.zoutohanafansite.service.GenerateSecurityKeyService;
+import com.example.zoutohanafansite.service.ProjectService;
 import com.example.zoutohanafansite.service.UserService;
 import com.example.zoutohanafansite.service.ValidationService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,17 +25,25 @@ public class SignupController {
     private final ValidationService validationService;
     private final GenerateSecurityKeyService generateSecurityKeyService;
     private final UserService userService;
+    private final ProjectService projectService;
 
-    public SignupController(PasswordEncoder passwordEncoder, ValidationService validationService, GenerateSecurityKeyService generateSecurityKeyService, UserService userService) {
+    public SignupController(PasswordEncoder passwordEncoder, ValidationService validationService, GenerateSecurityKeyService generateSecurityKeyService, UserService userService, ProjectService projectService) {
         this.passwordEncoder = passwordEncoder;
         this.validationService = validationService;
         this.generateSecurityKeyService = generateSecurityKeyService;
         this.userService = userService;
+        this.projectService = projectService;
     }
 
     @GetMapping
     public String signup(Model model, @RequestParam long id) {
+        Project project = projectService.getProjectById(id);
+        if(!project.getStatus().equals(ProjectStatus.DURING_SUBMISSION)){
+            throw new AccessDeniedException();
+        }
+
         SignupForm signupForm = new SignupForm();
+        signupForm.setIcon(1);
         model.addAttribute("signupForm", signupForm);
         model.addAttribute("id", id);
         return "auth/signup";
@@ -39,6 +51,10 @@ public class SignupController {
 
     @GetMapping("/rewrite")
     public String rewriteSignup(Model model, @RequestParam long id,@ModelAttribute SignupForm signupForm, @ModelAttribute SignupValidator signupValidator) {
+        Project project = projectService.getProjectById(id);
+        if(!project.getStatus().equals(ProjectStatus.DURING_SUBMISSION)){
+            throw new AccessDeniedException();
+        }
         model.addAttribute("id", id);
         return "auth/signup";
     }
@@ -97,6 +113,9 @@ public class SignupController {
 
     @GetMapping("/security-key")
     public String securityKey(@RequestParam long id, Model model,@ModelAttribute String securityKey){
+        if(securityKey.isEmpty()){
+            throw new AccessDeniedException();
+        }
         model.addAttribute("id", id);
         return "auth/security";
     }
