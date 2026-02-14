@@ -75,7 +75,7 @@ public class AdminController {
         List<ProjectCard> projects = projectService.getAllOngoingProjectsAdmin();
         model.addAttribute("projects", projects);
 
-        return "/admin/top";
+        return "admin/top";
     }
 
     @GetMapping("/account/list")
@@ -83,7 +83,7 @@ public class AdminController {
         List<User> users = userService.getAllUsers(form);
         model.addAttribute("users", users);
         model.addAttribute("form", form);
-        return "/admin/account_list";
+        return "admin/account_list";
     }
 
     @GetMapping("/account/view")
