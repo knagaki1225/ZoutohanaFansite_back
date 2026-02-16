@@ -258,12 +258,48 @@ public class AdminController {
     // 書評一覧のステータス一括変更
     @PostMapping("/review/statusUpdate")
     public String statusUpdate(
+            ReviewSearchForm form,
             @RequestParam String urlKey,
             @RequestParam List<Long> reviewIds,
-            @RequestParam String targetStatus) {
+            @RequestParam String targetStatus,
+            RedirectAttributes redirectAttributes) {
 
         reviewService.changeStatus(reviewIds, targetStatus);
-        return "redirect:/admin/review/list?urlKey=" + urlKey;
+
+        redirectAttributes.addAttribute("urlKey", urlKey);
+        redirectAttributes.addAttribute("keyword", form.getKeyword());
+        redirectAttributes.addAttribute("sort", form.getSort());
+
+        if (form.getStatus() != null) {
+            for (String s : form.getStatus()) {
+                redirectAttributes.addAttribute("status", s);
+            }
+        }
+        if (form.getGenreIds() != null) {
+            for (Long gid : form.getGenreIds()) {
+                redirectAttributes.addAttribute("genreIds", gid);
+            }
+        }
+        if (form.getUserGender() != null) {
+            for (String g : form.getUserGender()) {
+                redirectAttributes.addAttribute("userGender", g);
+            }
+        }
+        if (form.getUserAgeGroup() != null) {
+            for (String a : form.getUserAgeGroup()) {
+                redirectAttributes.addAttribute("userAgeGroup", a);
+            }
+        }
+        if (form.getUserAddress() != null) {
+            for (String addr : form.getUserAddress()) {
+                redirectAttributes.addAttribute("userAddress", addr);
+            }
+        }
+
+        redirectAttributes.addAttribute("createdStartAt", form.getCreatedStartAt());
+        redirectAttributes.addAttribute("createdEndAt", form.getCreatedEndAt());
+
+        return "redirect:/admin/review/list";
     }
 
     @PostMapping("/review/genreUpdate")
