@@ -112,10 +112,7 @@ public class SignupController {
     }
 
     @GetMapping("/security-key")
-    public String securityKey(@RequestParam long id, Model model,@ModelAttribute String securityKey){
-        if(securityKey.isEmpty()){
-            throw new AccessDeniedException();
-        }
+    public String securityKey(@RequestParam long id, Model model){
         model.addAttribute("id", id);
         return "auth/security";
     }
