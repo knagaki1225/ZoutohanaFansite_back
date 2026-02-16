@@ -1,8 +1,11 @@
 package com.example.zoutohanafansite.controller;
 
 import com.example.zoutohanafansite.entity.auth.User;
+import com.example.zoutohanafansite.entity.enums.ProjectStatus;
 import com.example.zoutohanafansite.entity.form.NewPasswordForm;
 import com.example.zoutohanafansite.entity.form.PasswordResetForm;
+import com.example.zoutohanafansite.entity.project.Project;
+import com.example.zoutohanafansite.service.ProjectService;
 import com.example.zoutohanafansite.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,13 +18,21 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class LoginController {
     private final UserService userService;
+    private final ProjectService projectService;
 
-    public LoginController(UserService userService) {
+    public LoginController(UserService userService, ProjectService projectService, ProjectService projectService1) {
         this.userService = userService;
+        this.projectService = projectService1;
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String login(@RequestParam(required = false) Long id) {
+        if(id != null){
+            Project project = projectService.getProjectById(id);
+            if(project == null || project.getStatus() != ProjectStatus.DURING_SUBMISSION){
+                throw new IllegalStateException();
+            }
+        }
         return "auth/login";
     }
 
