@@ -86,7 +86,7 @@ public class MyPageController {
         model.addAttribute("review", review);
         Project project = projectService.getProjectById(review.getProjectId());
         model.addAttribute("project", project);
-        return "/books/book-detail";
+        return "books/book-detail";
     }
 
     @GetMapping("/notification")
@@ -94,7 +94,7 @@ public class MyPageController {
         List<NotificationList> notificationLists = notificationService.getNotificationListByUserId(user.getUserId());
         model.addAttribute("notifications", notificationLists);
 
-        return "/notification/notification-list";
+        return "notification/notification-list";
     }
 
     @GetMapping("/notification/{id}")
@@ -109,7 +109,7 @@ public class MyPageController {
 
         notificationService.updateNotificationSeen(id);
 
-        return "/notification/notification-detail";
+        return "notification/notification-detail";
     }
 
 }
