@@ -65,6 +65,8 @@ public class ValidationService {
         projectValidator.setNullOngoingAt(form.getProjectStartAt() == null || form.getProjectEndAt() == null);
         projectValidator.setNullSubmissionAt(form.getSubmissionStartAt() == null || form.getSubmissionEndAt() == null);
         projectValidator.setNullVotingAt(form.getVotingStartAt() == null || form.getVotingEndAt() == null);
+        projectValidator.setNullThemeColor(form.getThemeColor() == null);
+
 
         projectValidator.updateStatus();
 
