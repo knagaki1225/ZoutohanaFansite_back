@@ -198,6 +198,7 @@ public class AdminController {
         project.setSubmissionEndAt(form.getSubmissionEndAt());
         project.setVotingStartAt(form.getVotingStartAt());
         project.setVotingEndAt(form.getVotingEndAt());
+        project.setPublished(form.isPublished());
 
         projectService.updateProject(project);
         return "redirect:/admin/project/view?urlKey=" + project.getUrlKey();

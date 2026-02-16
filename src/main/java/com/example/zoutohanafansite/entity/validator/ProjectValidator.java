@@ -12,6 +12,7 @@ public class ProjectValidator {
     private boolean nullOngoingAt;
     private boolean nullSubmissionAt;
     private boolean nullVotingAt;
+    private boolean nullThemeColor;
 
     public ProjectValidator(){
         this.valid = false;
@@ -22,11 +23,12 @@ public class ProjectValidator {
         this.nullOngoingAt = false;
         this.nullSubmissionAt = false;
         this.nullVotingAt = false;
+        this.nullThemeColor = false;
     }
 
     public void updateStatus(){
         this.valid = (
-                nullName || nullUrlKey || existsUrlKey || nullIntroduction || nullOngoingAt || nullSubmissionAt || nullVotingAt
+                nullName || nullUrlKey || existsUrlKey || nullIntroduction || nullOngoingAt || nullSubmissionAt || nullVotingAt || nullThemeColor
         );
     }
 }
