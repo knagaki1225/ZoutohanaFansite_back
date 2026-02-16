@@ -30,7 +30,7 @@ public class LoginController {
         PasswordResetForm passwordResetForm = new PasswordResetForm();
         model.addAttribute("passwordResetForm", passwordResetForm);
         model.addAttribute("id", id);
-        return "/auth/pw-reset";
+        return "auth/pw-reset";
     }
 
     @PostMapping("/password-reset")
